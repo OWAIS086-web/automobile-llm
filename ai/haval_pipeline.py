@@ -347,7 +347,7 @@ def get_rag_engine(company_id: str = "haval") -> Optional[RAGEngine]:
         # Only create if at least one vector store exists and has data
         if pakwheels_vs or whatsapp_vs:
             # Initialize LLM from centralized config
-            api_key = getenv("GEMINI_API_KEY", "AIzaSyBAbDTiaRTCNouLSiBU-beJPCij357RgUk")
+            api_key = getenv("GEMINI_API_KEY", "key here")
             llm = get_llm_for_component("answer_generation", fallback_api_key=api_key)
 
             rag = RAGEngine(
@@ -707,7 +707,7 @@ def _run_pipeline(json_path: str, topic_url: str, sources: str, company_id: str 
             )
 
         # Initialize LLM for enrichment from centralized config
-        api_key = getenv("GEMINI_API_KEY", "AIzaSyBAbDTiaRTCNouLSiBU-beJPCij357RgUk")
+        api_key = getenv("GEMINI_API_KEY", "key here")
         print("[HavalPipeline] Initializing LLM for enrichment from centralized config.")
         llm = get_llm_for_component("enrichment", fallback_api_key=api_key)
 
@@ -883,4 +883,5 @@ def get_daily_weekly_stats():
     """
     with _status_lock:
         return _daily_stats, _weekly_stats
+
 
