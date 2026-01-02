@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Settings - {{ config.app.name or 'Insights AI' }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/settings.css') }}">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-background">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="modern-nav">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <img src="{{ url_for('static', filename='images/dark-logo.svg') }}" alt="Insights AI" class="brand-logo" id="navLogo">
+                <span class="brand-text">Insights AI</span>
+                <span class="brand-badge">SETTINGS</span>
+            </div>
+            
+            <div class="nav-actions">
+                <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+                    <span id="themeIcon">☀️</span>
+                </button>
+                <a href="{{ url_for('chatbot_advanced') }}" class="nav-link">
+                    <span>🤖 AI Chat</span>
+                </a>
+                <a href="{{ url_for('analysis') }}" class="nav-link">
+                    <span>📈 Analytics</span>
+                </a>
+                <a href="{{ url_for('view_whatsapp') }}" class="nav-link">
+                    <span>💬 WhatsApp</span>
+                </a>
+                <a href="{{ url_for('logout') }}" class="nav-cta">
+                    <span>Logout</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+        <div class="settings-container">
+            <div class="settings-header">
+                <h1 class="settings-title">⚙️ Application Settings</h1>
+                <div class="settings-actions">
+                    <button class="btn btn-secondary" onclick="goToChatbot()">
+                        ← Back to Chat
+                    </button>
+                    <button class="btn btn-primary" onclick="saveAllSettings()">
+                        💾 Save Changes
+                    </button>
+                </div>
+            </div>
+
+            <!-- Server Status -->
+            <div class="server-status">
+                <div class="status-dot"></div>
+                <div class="status-text">
+                    Server running on {{ server_info.host }}:{{ server_info.port }} 
+                    {% if server_info.debug_mode %}(Debug Mode){% else %}(Production Mode){% endif %}
+                </div>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <div class="settings-nav">
+                <button class="nav-tab active" onclick="showSection('server')">🖥️ Server</button>
+                <button class="nav-tab" onclick="showSection('data-collection')">📊 Data Collection</button>
+                <button class="nav-tab" onclick="showSection('features')">🎛️ Features</button>
+                <button class="nav-tab" onclick="showSection('performance')">⚡ Performance</button>
+                <button class="nav-tab" onclick="showSection('logging')">📝 Logging</button>
+                <button class="nav-tab" onclick="showSection('maintenance')">🔧 Maintenance</button>
+                <button class="nav-tab" onclick="showSection('backup')">💾 Backup</button>
+            </div>
+
+            <!-- Server Settings -->
+            <div id="server-section" class="settings-section active">
+                <h2 class="section-title">🖥️ Server Configuration</h2>
+                <p class="section-description">Configure Flask server settings, host, port, and runtime options.</p>
+                
+                <div class="settings-grid">
+                    <div class="setting-group">
+                        <h3 class="group-title">🌐 Network Settings</h3>
+                        
+                        <div class="setting-item">
+                            <label class="setting-label">Server Host</label>
+                            <div class="setting-description">Server bind address (127.0.0.1 for localhost, 0.0.0.0 for all interfaces)</div>
+                            <input type="text" class="setting-input" id="server_host" value="{{ server_info.host }}" data-restart="true">
+                        </div>
+                        
+                        <div class="setting-item">
+                            <label class="setting-label">Server Port</label>
+                            <div class="setting-description">Port number for the web server (1-65535)</div>
+                            <input type="number" class="setting-input" id="server_port" value="{{ server_info.port }}" min="1" max="65535" data-restart="true">
+                        </div>
+                    </div>
+
+                    <div class="setting-group">
+                        <h3 class="group-title">🔧 Runtime Options</h3>
+                        
+                        <div class="setting-item">
+                            <div class="setting-toggle">
+                                <div class="toggle-switch {% if server_info.debug_mode %}active{% endif %}" onclick="toggleSetting(this, 'debug_mode')" data-restart="true">
+                                    <div class="toggle-slider"></div>
+                                </div>
+                                <div>
+                                    <div class="setting-label">Debug Mode</div>
+                                    <div class="setting-description">Enable Flask debug mode with detailed error pages</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-toggle">
+                                <div class="toggle-switch {% if server_info.auto_reload %}active{% endif %}" onclick="toggleSetting(this, 'auto_reload')" data-restart="true">
+                                    <div class="toggle-slider"></div>
+                                </div>
+                                <div>
+                                    <div class="setting-label">Auto Reload</div>
+                                    <div class="setting-description">Automatically restart server when code changes</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="setting-group">
+                        <h3 class="group-title">🔐 Security</h3>
+                        
+                        <div class="setting-item">
+                            <label class="setting-label">Session Timeout</label>
+                            <div class="setting-description">User session timeout in seconds</div>
+                            <input type="number" class="setting-input" id="session_timeout" value="{{ config.server.session_timeout or 3600 }}" min="300" max="86400">
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-toggle">
+                                <div class="toggle-switch {% if config.server.permanent_session %}active{% endif %}" onclick="toggleSetting(this, 'permanent_session')">
+                                    <div class="toggle-slider"></div>
+                                </div>
+                                <div>
+                                    <div class="setting-label">Permanent Sessions</div>
+                                    <div class="setting-description">Keep users logged in across browser sessions</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if not server_info.is_production %}
+                <div style="margin-top: 24px;">
+                    <button class="btn btn-danger" onclick="restartServer()">
+                        🔄 Restart Server
+                    </button>
+                    <span style="margin-left: 12px; font-size: 14px; color: var(--text-secondary);">
+                        Development mode only
+                    </span>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Data Collection Settings -->
+            <div id="data-collection-section" class="settings-section">
+                <h2 class="section-title">📊 Data Collection</h2>
+                <p class="section-description">Manage data collection from various sources including PakWheels forums and WhatsApp messages.</p>
+                
+                <div class="settings-grid">
+                    <div class="setting-group">
+                        <h3 class="group-title">🔍 PakWheels Scraping</h3>
+                        <p class="group-description">Scrape the latest posts and discussions from PakWheels forums for analysis.</p>
+                        
+                        <div class="setting-item">
+                            <label class="setting-label">Number of Posts to Scrape</label>
+                            <div class="setting-description">Minimum: 10 posts • Maximum: 10,000 posts • Recommended: 100-500 posts</div>
+                            <input 
+                                type="number" 
+                                class="setting-input" 
+                                id="pakWheelsPosts" 
+                                min="10" 
+                                max="10000" 
+                                value="100" 
+                                step="10"
+                                placeholder="Enter number of posts (10-10,000)"
+                            >
+                        </div>
+                        
+                        <div class="setting-item">
+                            <button class="btn btn-primary" id="startPakWheelsScraping">
+                                🔍 Start PakWheels Scraping
+                            </button>
+                        </div>
+                    </div>
+
+                    {% if user.company_id == 'haval' %}
+                    <div class="setting-group">
+                        <h3 class="group-title">💬 WATI Data Collection</h3>
+                        <p class="group-description">Fetch the latest WhatsApp conversations and support tickets from WATI for analysis.</p>
+                        
+                        <div class="setting-item">
+                            <label class="setting-label">Time Period</label>
+                            <div class="setting-description">Select the time period for data collection</div>
+                            <select id="watiDays" class="setting-input">
+                                <option value="1">Last 1 Day</option>
+                                <option value="3">Last 3 Days</option>
+                                <option value="7">Last 7 Days</option>
+                                <option value="14">Last 14 Days</option>
+                                <option value="30">Last 30 Days</option>
+                            </select>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <button class="btn btn-primary" id="startWatiFetching">
+                                📱 Fetch WATI Data
+                            </button>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="setting-group">
+                        <h3 class="group-title">📈 Collection Status</h3>
+                        <div class="status-grid">
+                            <div class="status-card">
+                                <div class="status-icon">🔍</div>
+                                <div class="status-info">
+                                    <div class="status-title">PakWheels Data</div>
+                                    <div class="status-value" id="pakwheelsStatus">Ready</div>
+                                </div>
+                            </div>
+                            {% if user.company_id == 'haval' %}
+                            <div class="status-card">
+                                <div class="status-icon">💬</div>
+                                <div class="status-info">
+                                    <div class="status-title">WATI Data</div>
+                                    <div class="status-value" id="watiStatus">Ready</div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            <div class="status-card">
+                                <div class="status-icon">🤖</div>
+                                <div class="status-info">
+                                    <div class="status-title">AI Pipeline</div>
+                                    <div class="status-value" id="pipelineStatus">Ready</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features Settings -->
+            <div id="features-section" class="settings-section">
+                <h2 class="section-title">🎛️ Feature Management</h2>
+                <p class="section-description">Enable or disable application features and experimental functionality.</p>
+                
+                <div class="settings-grid">
+                    <div class="setting-group">
+                        <h3 class="group-title">🚀 Core Features</h3>
+                        <div class="feature-list">
+                            <div class="feature-item">
+                                <div class="feature-info">
+                                    <div class="feature-name">WATI Integration</div>
+                                    <div class="feature-desc">WhatsApp API integration for message fetching</div>
+                                </div>
+                                <div class="toggle-switch {% if features.wati_integration %}active{% endif %}" onclick="toggleSetting(this, 'feature_wati_integration')">
+                                    <div class="toggle-slider"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="feature-item">
+                                <div class="feature-info">
+                                    <div class="feature-name">PakWheels Scraping</div>
+                                    <div class="feature-desc">Web scraping for forum discussions</div>
+                                </div>
+                                <div class="toggle-switch {% if features.pakwheels_scraping %}active{% endif %}" onclick="toggleSetting(this, 'feature_pakwheels_scraping')">
+                                    <div class="toggle-slider"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="feature-item">
+                                <div class="feature-info">
+                                    <div class="feature-name">Analytics Dashboard</div>
+                                    <div class="feature-desc">Data visualization and reporting</div>
+                                </div>
+                                <div class="toggle-switch {% if features.analytics_dashboard %}active{% endif %}" onclick="toggleSetting(this, 'feature_analytics_dashboard')">
+                                    <div class="toggle-slider"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="feature-item">
+                                <div class="feature-info">
+                                    <div class="feature-name">Export Functionality</div>
+                                    <div class="feature-desc">Data export in various formats</div>
+                                </div>
+                                <div class="toggle-switch {% if features.export_functionality %}active{% endif %}" onclick="toggleSetting(this, 'feature_export_functionality')">
+                                    <div class="toggle-slider"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="setting-group">
+                        <h3 class="group-title">🧪 Experimental</h3>
+                        <div class="feature-list">
+                            <div class="feature-item">
+                                <div class="feature-info">
+                                    <div class="feature-name">Experimental AI Features</div>
+                                    <div class="feature-desc">Beta AI functionality and models</div>
+                                </div>
+                                <div class="toggle-switch {% if features.experimental_ai_features %}active{% endif %}" onclick="toggleSetting(this, 'feature_experimental_ai_features')">
+                                    <div class="toggle-slider"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="feature-item">
+                                <div class="feature-info">
+                                    <div class="feature-name">Beta UI Components</div>
+                                    <div class="feature-desc">New interface elements and designs</div>
+                                </div>
+                                <div class="toggle-switch {% if features.beta_ui_components %}active{% endif %}" onclick="toggleSetting(this, 'feature_beta_ui_components')">
+                                    <div class="toggle-slider"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Settings -->
+            <div id="performance-section" class="settings-section">
+                <h2 class="section-title">⚡ Performance Optimization</h2>
+                <p class="section-description">Configure caching, compression, and performance-related settings.</p>
+                
+                <div class="settings-grid">
+                    <div class="setting-group">
+                        <h3 class="group-title">💾 Caching</h3>
+                        
+                        <div class="setting-item">
+                            <div class="setting-toggle">
+                                <div class="toggle-switch {% if config.performance.cache_enabled %}active{% endif %}" onclick="toggleSetting(this, 'cache_enabled')">
+                                    <div class="toggle-slider"></div>
+                                </div>
+                                <div>
+                                    <div class="setting-label">Enable Caching</div>
+                                    <div class="setting-description">Cache responses to improve performance</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <label class="setting-label">Cache Timeout (seconds)</label>
+                            <div class="setting-description">How long to cache responses</div>
+                            <input type="number" class="setting-input" id="cache_timeout" value="{{ config.performance.cache_timeout or 300 }}" min="60" max="3600">
+                        </div>
+                    </div>
+
+                    <div class="setting-group">
+                        <h3 class="group-title">🗜️ Compression</h3>
+                        
+                        <div class="setting-item">
+                            <div class="setting-toggle">
+                                <div class="toggle-switch {% if config.performance.compression_enabled %}active{% endif %}" onclick="toggleSetting(this, 'compression_enabled')">
+                                    <div class="toggle-slider"></div>
+                                </div>
+                                <div>
+                                    <div class="setting-label">Enable Compression</div>
+                                    <div class="setting-description">Compress responses to reduce bandwidth</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <label class="setting-label">Compression Level</label>
+                            <div class="setting-description">Compression level (1-9, higher = better compression)</div>
+                            <input type="range" class="setting-input" id="compression_level" value="{{ config.performance.compression_level or 6 }}" min="1" max="9">
+                            <div style="text-align: center; margin-top: 4px; font-size: 12px; color: var(--text-secondary);">
+                                Level: <span id="compression_level_display">{{ config.performance.compression_level or 6 }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Logging Settings -->
+            <div id="logging-section" class="settings-section">
+                <h2 class="section-title">📝 Logging Configuration</h2>
+                <p class="section-description">Configure application logging levels, manage log files, and monitor system logs.</p>
+                
+                <div class="settings-grid">
+                    <div class="setting-group">
+                        <h3 class="group-title">📊 Global Log Levels</h3>
+                        
+                        <div class="setting-item">
+                            <label class="setting-label">Default Log Level</label>
+                            <div class="setting-description">Minimum log level to record globally</div>
+                            <select class="setting-input" id="log_level">
+                                <option value="DEBUG" {% if config.logging.level == 'DEBUG' %}selected{% endif %}>DEBUG - All messages</option>
+                                <option value="INFO" {% if config.logging.level == 'INFO' %}selected{% endif %}>INFO - General information</option>
+                                <option value="WARNING" {% if config.logging.level == 'WARNING' %}selected{% endif %}>WARNING - Warning messages</option>
+                                <option value="ERROR" {% if config.logging.level == 'ERROR' %}selected{% endif %}>ERROR - Error messages only</option>
+                                <option value="CRITICAL" {% if config.logging.level == 'CRITICAL' %}selected{% endif %}>CRITICAL - Critical errors only</option>
+                            </select>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-toggle">
+                                <div class="toggle-switch {% if config.logging.console_logging %}active{% endif %}" onclick="toggleSetting(this, 'console_logging')">
+                                    <div class="toggle-slider"></div>
+                                </div>
+                                <div>
+                                    <div class="setting-label">Console Logging</div>
+                                    <div class="setting-description">Show logs in console output</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="setting-group">
+                        <h3 class="group-title">🎯 Individual Logger Levels</h3>
+                        <div class="logger-levels">
+                            {% for logger_name, level in log_levels.items() %}
+                            <div class="logger-item">
+                                <div class="logger-info">
+                                    <div class="logger-name">{{ logger_name if logger_name != 'root' else 'Root Logger' }}</div>
+                                    <div class="logger-desc">
+                                        {% if logger_name == 'root' %}Main application logger
+                                        {% elif logger_name == 'server' %}Flask server logs
+                                        {% elif logger_name == 'ai' %}AI processing logs
+                                        {% elif logger_name == 'whatsapp' %}WhatsApp integration logs
+                                        {% elif logger_name == 'chat' %}Chat system logs
+                                        {% elif logger_name == 'dealership' %}Dealership management logs
+                                        {% elif logger_name == 'fetching' %}Data fetching logs
+                                        {% else %}{{ logger_name }} component logs
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <select class="logger-level-select" data-logger="{{ logger_name }}" onchange="updateLoggerLevel(this)">
+                                    <option value="DEBUG" {% if level == 'DEBUG' %}selected{% endif %}>DEBUG</option>
+                                    <option value="INFO" {% if level == 'INFO' %}selected{% endif %}>INFO</option>
+                                    <option value="WARNING" {% if level == 'WARNING' %}selected{% endif %}>WARNING</option>
+                                    <option value="ERROR" {% if level == 'ERROR' %}selected{% endif %}>ERROR</option>
+                                    <option value="CRITICAL" {% if level == 'CRITICAL' %}selected{% endif %}>CRITICAL</option>
+                                </select>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="setting-group">
+                        <h3 class="group-title">📁 File Management</h3>
+                        
+                        <div class="setting-item">
+                            <label class="setting-label">Max Log File Size (MB)</label>
+                            <div class="setting-description">Maximum size before log rotation</div>
+                            <input type="number" class="setting-input" id="max_log_size" value="{{ (config.logging.max_log_size or 10485760) // 1048576 }}" min="1" max="100">
+                        </div>
+                        
+                        <div class="setting-item">
+                            <label class="setting-label">Backup Count</label>
+                            <div class="setting-description">Number of old log files to keep</div>
+                            <input type="number" class="setting-input" id="backup_count" value="{{ config.logging.backup_count or 5 }}" min="1" max="20">
+                        </div>
+                        
+                        <div class="setting-item">
+                            <label class="setting-label">Log File Operations</label>
+                            <div class="setting-description">Manage log files and cleanup</div>
+                            <div class="log-operations">
+                                <button class="btn btn-secondary" onclick="rotateLogFiles()">
+                                    🔄 Rotate Logs
+                                </button>
+                                <button class="btn btn-warning" onclick="cleanupLogFiles()">
+                                    🧹 Cleanup Old Logs
+                                </button>
+                                <button class="btn btn-info" onclick="refreshLogStatus()">
+                                    📊 Refresh Status
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="setting-group">
+                        <h3 class="group-title">📋 Log Files Status</h3>
+                        <div class="log-files-list" id="logFilesList">
+                            {% for filename, info in log_files.items() %}
+                            <div class="log-file-item">
+                                <div class="log-file-info">
+                                    <div class="log-file-name">{{ filename }}</div>
+                                    <div class="log-file-details">
+                                        {% if info.exists %}
+                                        Size: {{ info.size_mb }} MB | Modified: {{ info.modified[:19] }}
+                                        {% else %}
+                                        File not found
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="log-file-actions">
+                                    {% if info.exists %}
+                                    <button class="btn btn-sm btn-secondary" onclick="downloadLogFile('{{ filename }}')">
+                                        📥 Download
+                                    </button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Maintenance Settings -->
+            <div id="maintenance-section" class="settings-section">
+                <h2 class="section-title">🔧 Maintenance Mode</h2>
+                <p class="section-description">Configure maintenance mode and system messages.</p>
+                
+                <div class="settings-grid">
+                    <div class="setting-group">
+                        <h3 class="group-title">🚧 Maintenance Mode</h3>
+                        
+                        <div class="setting-item">
+                            <div class="setting-toggle">
+                                <div class="toggle-switch {% if server_info.maintenance_mode %}active{% endif %}" onclick="toggleSetting(this, 'maintenance_mode')">
+                                    <div class="toggle-slider"></div>
+                                </div>
+                                <div>
+                                    <div class="setting-label">Enable Maintenance Mode</div>
+                                    <div class="setting-description">Block access for regular users</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <label class="setting-label">Maintenance Message</label>
+                            <div class="setting-description">Message shown to users during maintenance</div>
+                            <textarea class="setting-input" id="maintenance_message" rows="3">{{ config.maintenance.maintenance_message or 'System is under maintenance. Please try again later.' }}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="setting-group">
+                        <h3 class="group-title">📤 Import/Export</h3>
+                        
+                        <div class="setting-item">
+                            <label class="setting-label">Configuration Management</label>
+                            <div class="setting-description">Backup and restore your settings</div>
+                            <div class="import-export">
+                                <button class="btn btn-secondary" onclick="exportSettings()">
+                                    📤 Export Settings
+                                </button>
+                                <label for="import-file" class="file-label">
+                                    📥 Import Settings
+                                </label>
+                                <input type="file" id="import-file" class="file-input" accept=".json" onchange="importSettings(this)">
+                                <button class="btn btn-danger" onclick="resetSettings()">
+                                    🔄 Reset to Defaults
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Backup Settings -->
+            <div id="backup-section" class="settings-section">
+                <h2 class="section-title">💾 Backup Configuration</h2>
+                <p class="section-description">Configure automatic backups and data retention policies.</p>
+                
+                <div class="settings-grid">
+                    <div class="setting-group">
+                        <h3 class="group-title">⏰ Automatic Backups</h3>
+                        
+                        <div class="setting-item">
+                            <div class="setting-toggle">
+                                <div class="toggle-switch {% if config.backup.auto_backup %}active{% endif %}" onclick="toggleSetting(this, 'auto_backup')">
+                                    <div class="toggle-slider"></div>
+                                </div>
+                                <div>
+                                    <div class="setting-label">Enable Auto Backup</div>
+                                    <div class="setting-description">Automatically backup data at regular intervals</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <label class="setting-label">Backup Interval (hours)</label>
+                            <div class="setting-description">How often to create backups</div>
+                            <input type="number" class="setting-input" id="backup_interval" value="{{ (config.backup.backup_interval or 86400) // 3600 }}" min="1" max="168">
+                        </div>
+                        
+                        <div class="setting-item">
+                            <label class="setting-label">Retention Period (days)</label>
+                            <div class="setting-description">How long to keep old backups</div>
+                            <input type="number" class="setting-input" id="backup_retention" value="{{ config.backup.backup_retention or 7 }}" min="1" max="365">
+                        </div>
+                    </div>
+
+                    <div class="setting-group">
+                        <h3 class="group-title">📋 Backup Content</h3>
+                        
+                        <div class="setting-item">
+                            <div class="setting-toggle">
+                                <div class="toggle-switch {% if config.backup.backup_database %}active{% endif %}" onclick="toggleSetting(this, 'backup_database')">
+                                    <div class="toggle-slider"></div>
+                                </div>
+                                <div>
+                                    <div class="setting-label">Backup Database</div>
+                                    <div class="setting-description">Include database in backups</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-toggle">
+                                <div class="toggle-switch {% if config.backup.backup_logs %}active{% endif %}" onclick="toggleSetting(this, 'backup_logs')">
+                                    <div class="toggle-slider"></div>
+                                </div>
+                                <div>
+                                    <div class="setting-label">Backup Logs</div>
+                                    <div class="setting-description">Include log files in backups</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-toggle">
+                                <div class="toggle-switch {% if config.backup.backup_config %}active{% endif %}" onclick="toggleSetting(this, 'backup_config')">
+                                    <div class="toggle-slider"></div>
+                                </div>
+                                <div>
+                                    <div class="setting-label">Backup Configuration</div>
+                                    <div class="setting-description">Include config files in backups</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Restart Warning -->
+            <div id="restart-warning" class="restart-warning">
+                ⚠️ Some changes require a server restart to take effect. Click "Restart Server" in the Server section.
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/settings.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/settings-data-collection.js') }}"></script>
+</body>
+</html>

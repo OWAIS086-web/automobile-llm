@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Create Account - Insights AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/signup.css') }}">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-background">
+        <div class="geometric-shape shape-1"></div>
+        <div class="geometric-shape shape-2"></div>
+        <div class="geometric-shape shape-3"></div>
+        <div class="geometric-shape shape-4"></div>
+        <div class="geometric-shape shape-5"></div>
+        <div class="geometric-shape shape-6"></div>
+        <div class="floating-lines">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+        </div>
+    </div>
+
+    <div class="auth-container">
+        <!-- Navigation -->
+        <nav class="auth-nav">
+            <div class="nav-container">
+                <div class="nav-brand">
+                    <img src="{{ url_for('static', filename='images/dark-logo.svg') }}" alt="Insights AI" class="brand-logo" id="authLogo">
+                    <span class="brand-text">Insights AI</span>
+                </div>
+                <div class="nav-actions">
+                    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+                        <span id="themeIcon">☀️</span>
+                    </button>
+                    <a href="{{ url_for('index') }}" class="nav-link">← Back to Home</a>
+                </div>
+            </div>
+        </nav>
+
+        <div class="auth-content">
+            <!-- Left Side - Form -->
+            <div class="auth-form-container">
+                <form method="POST" class="auth-form" id="registerForm">
+                    <div class="auth-header">
+                        <h1 class="auth-title">Create Your Account</h1>
+                        <p class="auth-subtitle">Join thousands of users transforming their business with AI-powered insights</p>
+                    </div>
+
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            <div class="flash-messages">
+                                {% for category, message in messages %}
+                                    <div class="flash-message {{ category }}">
+                                        <span class="flash-icon">
+                                            {% if category == 'error' %}⚠️{% else %}ℹ️{% endif %}
+                                        </span>
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+
+                    <div class="form-group">
+                        <label for="username" class="form-label">
+                            <span class="label-icon">👤</span>
+                            Username
+                        </label>
+                        <div class="input-container">
+                            <input type="text" id="username" name="username" class="form-input" 
+                                   placeholder="Choose a unique username" required minlength="3" maxlength="20">
+                            <div class="input-focus-border"></div>
+                        </div>
+                        <div class="form-help">3-20 characters, letters and numbers only</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email" class="form-label">
+                            <span class="label-icon">📧</span>
+                            Email Address
+                        </label>
+                        <div class="input-container">
+                            <input type="email" id="email" name="email" class="form-input" 
+                                   placeholder="Enter your email address" required>
+                            <div class="input-focus-border"></div>
+                        </div>
+                        <div class="form-help">We'll use this for account recovery and updates</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="company_id" class="form-label">
+                            <span class="label-icon">🏢</span>
+                            Select Your Company
+                        </label>
+                        <div class="input-container">
+                            <select id="company_id" name="company_id" class="form-input" required>
+                                <option value="">Choose your company...</option>
+                                <option value="haval">🚗 Haval</option>
+                                <option value="kia">🚙 Kia</option>
+                                <option value="toyota" disabled>🚘 Toyota (Coming Soon)</option>
+                            </select>
+                            <div class="input-focus-border"></div>
+                        </div>
+                        <div class="form-help">This determines which data you'll have access to</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password" class="form-label">
+                            <span class="label-icon">🔒</span>
+                            Password
+                        </label>
+                        <div class="input-container">
+                            <input type="password" id="password" name="password" class="form-input" 
+                                   placeholder="Create a strong password" required minlength="6">
+                            <button type="button" class="password-toggle" onclick="togglePassword('password')">
+                                <span id="passwordToggleIcon">👁️</span>
+                            </button>
+                            <div class="input-focus-border"></div>
+                        </div>
+                        <div class="password-strength">
+                            <div class="strength-bar">
+                                <div class="strength-fill" id="strengthFill"></div>
+                            </div>
+                            <div class="strength-text" id="strengthText">Enter a password</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirm_password" class="form-label">
+                            <span class="label-icon">🔒</span>
+                            Confirm Password
+                        </label>
+                        <div class="input-container">
+                            <input type="password" id="confirm_password" name="confirm_password" class="form-input" 
+                                   placeholder="Confirm your password" required>
+                            <button type="button" class="password-toggle" onclick="togglePassword('confirm_password')">
+                                <span id="confirmPasswordToggleIcon">👁️</span>
+                            </button>
+                            <div class="input-focus-border"></div>
+                        </div>
+                        <div class="form-help" id="passwordMatch"></div>
+                    </div>
+
+                    <div class="form-group submit-group">
+                        <button type="submit" class="auth-btn" id="submitBtn">
+                            <span class="btn-text">Create Account</span>
+                            <span class="btn-icon">→</span>
+                            <div class="btn-ripple"></div>
+                        </button>
+                    </div>
+
+                    <div class="auth-divider">
+                        <span class="divider-text">or continue with</span>
+                    </div>
+
+                    <div class="social-auth">
+                        <button type="button" class="social-btn google">
+                            <span class="social-icon">🔍</span>
+                            <span>Google</span>
+                        </button>
+                        <button type="button" class="social-btn github">
+                            <span class="social-icon">⚡</span>
+                            <span>GitHub</span>
+                        </button>
+                    </div>
+
+                    <div class="auth-footer">
+                        <p>Already have an account? 
+                            <a href="{{ url_for('login') }}" class="auth-link">
+                                Sign in here
+                                <span class="link-arrow">→</span>
+                            </a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Right Side - Visual -->
+            <div class="auth-visual">
+                <div class="visual-content">
+                    <div class="ai-connection-visual">
+                        <!-- Central AI Brain -->
+                        <div class="ai-brain">
+                            <div class="brain-core">
+                                <div class="core-pulse"></div>
+                                <span class="brain-icon">🧠</span>
+                            </div>
+                            <div class="neural-network">
+                                <div class="neuron neuron-1"></div>
+                                <div class="neuron neuron-2"></div>
+                                <div class="neuron neuron-3"></div>
+                                <div class="neuron neuron-4"></div>
+                                <div class="neuron neuron-5"></div>
+                                <div class="neuron neuron-6"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Connection Lines -->
+                        <div class="connection-lines">
+                            <div class="connection-line line-1">
+                                <div class="data-pulse pulse-1"></div>
+                            </div>
+                            <div class="connection-line line-2">
+                                <div class="data-pulse pulse-2"></div>
+                            </div>
+                            <div class="connection-line line-3">
+                                <div class="data-pulse pulse-3"></div>
+                            </div>
+                            <div class="connection-line line-4">
+                                <div class="data-pulse pulse-4"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Insight Nodes -->
+                        <div class="insight-nodes">
+                            <div class="insight-node node-1">
+                                <span class="node-icon">📊</span>
+                                <div class="node-glow"></div>
+                            </div>
+                            <div class="insight-node node-2">
+                                <span class="node-icon">⚡</span>
+                                <div class="node-glow"></div>
+                            </div>
+                            <div class="insight-node node-3">
+                                <span class="node-icon">🎯</span>
+                                <div class="node-glow"></div>
+                            </div>
+                            <div class="insight-node node-4">
+                                <span class="node-icon">💡</span>
+                                <div class="node-glow"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Floating Data Particles -->
+                        <div class="data-particles">
+                            <div class="particle particle-1"></div>
+                            <div class="particle particle-2"></div>
+                            <div class="particle particle-3"></div>
+                            <div class="particle particle-4"></div>
+                            <div class="particle particle-5"></div>
+                            <div class="particle particle-6"></div>
+                        </div>
+                    </div>
+                    
+                    <h2 class="visual-title">Start Your Journey</h2>
+                    <p class="visual-subtitle">Transform your business with powerful AI analytics and insights</p>
+                    
+                    <!-- Feature Highlights -->
+                    <div class="feature-highlights">
+                        <div class="feature-item">
+                            <span class="feature-icon">🚀</span>
+                            <span class="feature-text">Instant Setup</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🔒</span>
+                            <span class="feature-text">Secure & Private</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">📈</span>
+                            <span class="feature-text">Real-time Insights</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme management
+        function loadTheme() {
+            try {
+                const savedTheme = localStorage.getItem('theme') || 'dark';
+                document.documentElement.setAttribute('data-theme', savedTheme);
+                document.getElementById('themeIcon').textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+                updateLogo(savedTheme);
+            } catch (error) {
+                console.warn('Theme loading error:', error);
+                // Fallback to dark theme
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.getElementById('themeIcon').textContent = '☀️';
+            }
+        }
+
+        function toggleTheme() {
+            try {
+                const html = document.documentElement;
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                html.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                document.getElementById('themeIcon').textContent = newTheme === 'dark' ? '☀️' : '🌙';
+                updateLogo(newTheme);
+            } catch (error) {
+                console.warn('Theme toggle error:', error);
+            }
+        }
+
+        function updateLogo(theme) {
+            try {
+                const logo = document.getElementById('authLogo');
+                if (logo) {
+                    const logoFile = theme === 'dark' ? 'light-logo.svg' : 'dark-logo.svg';
+                    logo.src = `/static/images/${logoFile}`;
+                }
+            } catch (error) {
+                console.warn('Logo update error:', error);
+            }
+        }
+
+        // Password toggle
+        function togglePassword(inputId) {
+            const passwordInput = document.getElementById(inputId);
+            const toggleIcon = document.getElementById(inputId + 'ToggleIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.textContent = '👁️';
+            }
+        }
+
+        // Password strength checker
+        function checkPasswordStrength(password) {
+            let strength = 0;
+            let feedback = '';
+            
+            if (password.length >= 8) strength += 1;
+            if (password.match(/[a-z]/)) strength += 1;
+            if (password.match(/[A-Z]/)) strength += 1;
+            if (password.match(/[0-9]/)) strength += 1;
+            if (password.match(/[^a-zA-Z0-9]/)) strength += 1;
+            
+            const strengthFill = document.getElementById('strengthFill');
+            const strengthText = document.getElementById('strengthText');
+            
+            switch (strength) {
+                case 0:
+                case 1:
+                    strengthFill.style.width = '20%';
+                    strengthFill.style.background = '#ef4444';
+                    feedback = 'Very weak';
+                    break;
+                case 2:
+                    strengthFill.style.width = '40%';
+                    strengthFill.style.background = '#f97316';
+                    feedback = 'Weak';
+                    break;
+                case 3:
+                    strengthFill.style.width = '60%';
+                    strengthFill.style.background = '#eab308';
+                    feedback = 'Fair';
+                    break;
+                case 4:
+                    strengthFill.style.width = '80%';
+                    strengthFill.style.background = '#22c55e';
+                    feedback = 'Good';
+                    break;
+                case 5:
+                    strengthFill.style.width = '100%';
+                    strengthFill.style.background = '#16a34a';
+                    feedback = 'Strong';
+                    break;
+            }
+            
+            strengthText.textContent = feedback;
+            return strength;
+        }
+
+        // Password matching
+        function checkPasswordMatch() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            const matchElement = document.getElementById('passwordMatch');
+            
+            if (confirmPassword === '') {
+                matchElement.textContent = '';
+                matchElement.style.color = '';
+                return true;
+            }
+            
+            if (password === confirmPassword) {
+                matchElement.textContent = '✓ Passwords match';
+                matchElement.style.color = '#16a34a';
+                return true;
+            } else {
+                matchElement.textContent = '✗ Passwords do not match';
+                matchElement.style.color = '#ef4444';
+                return false;
+            }
+        }
+
+        // Form animations
+        function initFormAnimations() {
+            const inputs = document.querySelectorAll('.form-input');
+            
+            inputs.forEach(input => {
+                input.addEventListener('focus', () => {
+                    input.parentElement.classList.add('focused');
+                });
+                
+                input.addEventListener('blur', () => {
+                    if (!input.value) {
+                        input.parentElement.classList.remove('focused');
+                    }
+                });
+                
+                if (input.value) {
+                    input.parentElement.classList.add('focused');
+                }
+            });
+        }
+
+        // Button ripple effect
+        function initButtonRipple() {
+            const authBtn = document.querySelector('.auth-btn');
+            
+            authBtn.addEventListener('click', function(e) {
+                const ripple = this.querySelector('.btn-ripple');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.classList.add('active');
+                
+                setTimeout(() => {
+                    ripple.classList.remove('active');
+                }, 600);
+            });
+        }
+
+        // Form validation
+        function validateForm() {
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const companyId = document.getElementById('company_id').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            
+            if (!username || !email || !companyId || !password || !confirmPassword) {
+                alert('Please fill in all fields');
+                return false;
+            }
+            
+            if (password !== confirmPassword) {
+                alert('Passwords do not match');
+                return false;
+            }
+            
+            if (checkPasswordStrength(password) < 2) {
+                alert('Please choose a stronger password');
+                return false;
+            }
+            
+            return true;
+        }
+
+        // Initialize everything
+        window.addEventListener('load', () => {
+            loadTheme();
+            initFormAnimations();
+            initButtonRipple();
+            
+            // Fix select dropdown display with robust handling
+            const selectElement = document.getElementById('company_id');
+            if (selectElement) {
+                // Store original options text to prevent corruption
+                const originalOptions = Array.from(selectElement.options).map(option => ({
+                    value: option.value,
+                    text: option.textContent,
+                    disabled: option.disabled
+                }));
+                
+                // Function to restore options if corrupted
+                const restoreOptions = () => {
+                    selectElement.innerHTML = '';
+                    originalOptions.forEach(optionData => {
+                        const option = document.createElement('option');
+                        option.value = optionData.value;
+                        option.textContent = optionData.text;
+                        option.disabled = optionData.disabled;
+                        selectElement.appendChild(option);
+                    });
+                };
+                
+                // Force proper font rendering in dark mode
+                const fixSelectDisplay = () => {
+                    const theme = document.documentElement.getAttribute('data-theme');
+                    if (theme === 'dark') {
+                        // Check if text is corrupted
+                        const firstOption = selectElement.options[0];
+                        if (firstOption && (firstOption.textContent.includes('�') || firstOption.textContent.length !== originalOptions[0].text.length)) {
+                            restoreOptions();
+                        }
+                        
+                        selectElement.style.fontFamily = "'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+                        selectElement.style.textRendering = "optimizeLegibility";
+                        selectElement.style.webkitFontSmoothing = "antialiased";
+                        selectElement.style.mozOsxFontSmoothing = "grayscale";
+                        
+                        // Force re-render
+                        selectElement.style.display = 'none';
+                        selectElement.offsetHeight; // Trigger reflow
+                        selectElement.style.display = '';
+                    }
+                };
+                
+                // Fix on load and theme change
+                setTimeout(fixSelectDisplay, 100);
+                
+                selectElement.addEventListener('change', function() {
+                    if (this.value) {
+                        this.style.color = 'var(--text-primary)';
+                    } else {
+                        this.style.color = 'var(--text-tertiary)';
+                    }
+                    setTimeout(fixSelectDisplay, 50);
+                });
+                
+                // Set initial color
+                if (!selectElement.value) {
+                    selectElement.style.color = 'var(--text-tertiary)';
+                }
+                
+                // Listen for theme changes
+                const observer = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        if (mutation.type === 'attributes' && mutation.attributeName === 'data-theme') {
+                            setTimeout(() => {
+                                restoreOptions();
+                                fixSelectDisplay();
+                            }, 150);
+                        }
+                    });
+                });
+                
+                observer.observe(document.documentElement, {
+                    attributes: true,
+                    attributeFilter: ['data-theme']
+                });
+            }
+            
+            // Password strength checking
+            document.getElementById('password').addEventListener('input', (e) => {
+                checkPasswordStrength(e.target.value);
+                checkPasswordMatch();
+            });
+            
+            // Password matching
+            document.getElementById('confirm_password').addEventListener('input', checkPasswordMatch);
+            
+            // Form submission
+            document.getElementById('registerForm').addEventListener('submit', function(e) {
+                if (!validateForm()) {
+                    e.preventDefault();
+                    return;
+                }
+                
+                // Add loading state
+                const submitBtn = document.getElementById('submitBtn');
+                submitBtn.classList.add('loading');
+                submitBtn.querySelector('.btn-text').textContent = 'Creating Account...';
+            });
+        });
+    </script>
+</body>
+</html>

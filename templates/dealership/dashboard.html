@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dealership Management - Insights AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dealership.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-background">
+            <div class="loading-orb orb-1"></div>
+            <div class="loading-orb orb-2"></div>
+            <div class="loading-orb orb-3"></div>
+            <div class="loading-orb orb-4"></div>
+        </div>
+        
+        <div class="loading-content">
+            <div class="loading-logo-container">
+                <div class="logo-glow-ring"></div>
+                <div class="logo-pulse-ring"></div>
+                <img src="{{ url_for('static', filename='images/light-logo.svg') }}" alt="Insights AI Logo" class="loading-logo" id="loadingLogo">
+                <div class="logo-sparkles">
+                    <div class="sparkle sparkle-1">🏢</div>
+                    <div class="sparkle sparkle-2">🔧</div>
+                    <div class="sparkle sparkle-3">📊</div>
+                    <div class="sparkle sparkle-4">🚗</div>
+                </div>
+            </div>
+            
+            <div class="loading-text">
+                <h2 class="loading-title">Dealership Management</h2>
+                <p class="loading-subtitle">Loading comprehensive dealership analytics...</p>
+            </div>
+            
+            <div class="loading-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <div class="progress-text">Initializing system...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="dealership-container" id="mainContainer">
+        <!-- Header -->
+        <header class="dealership-header">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="logo-section">
+                        <img src="{{ url_for('static', filename='images/light-logo.svg') }}" alt="Logo" class="header-logo" id="headerLogo">
+                        <div class="header-title">
+                            <h1>Dealership Management</h1>
+                            <p>Comprehensive Analytics & Reporting System</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="header-right">
+                    <div class="header-actions">
+                        <button class="header-btn" onclick="toggleTheme()">
+                            <span class="theme-icon">🌙</span>
+                        </button>
+                        <button class="header-btn" onclick="window.location.href='/chatbot_advanced'">
+                            <span>💬</span>
+                            <span>Chat AI</span>
+                        </button>
+                        <div class="user-menu">
+                            <button class="user-btn">
+                                <span class="user-avatar">{{ user.username[0].upper() if user else 'U' }}</span>
+                                <span class="user-name">{{ user.username if user else 'User' }}</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="dealership-nav">
+            <div class="nav-content">
+                <!-- Mobile/Dropdown Navigation -->
+                <div class="nav-dropdown-container">
+                    <button class="nav-dropdown-toggle" id="navDropdownToggle">
+                        <span class="current-page-icon">📊</span>
+                        <span class="current-page-text">Dashboard</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </button>
+                    
+                    <div class="nav-dropdown-menu" id="navDropdownMenu">
+                        <div class="dropdown-section">
+                            <div class="dropdown-section-title">🏪 Dealership Management</div>
+                            <a href="/dealership" class="nav-dropdown-item active">
+                                <span class="nav-icon">📊</span>
+                                <span class="nav-text">Dashboard</span>
+                            </a>
+                            <a href="/dealership/warranty-claims" class="nav-dropdown-item">
+                                <span class="nav-icon">⚠️</span>
+                                <span class="nav-text">Warranty Claims</span>
+                            </a>
+                            <a href="/dealership/campaign-reports" class="nav-dropdown-item">
+                                <span class="nav-icon">📋</span>
+                                <span class="nav-text">Campaign Reports</span>
+                            </a>
+                            <a href="/dealership/ffs-inspections" class="nav-dropdown-item">
+                                <span class="nav-icon">🔍</span>
+                                <span class="nav-text">FFS Inspections</span>
+                            </a>
+                            <a href="/dealership/sfs-inspections" class="nav-dropdown-item">
+                                <span class="nav-icon">🔎</span>
+                                <span class="nav-text">SFS Inspections</span>
+                            </a>
+                            <a href="/dealership/pdi-inspections" class="nav-dropdown-item">
+                                <span class="nav-icon">📝</span>
+                                <span class="nav-text">PDI Inspections</span>
+                            </a>
+                            <a href="/dealership/repair-orders" class="nav-dropdown-item">
+                                <span class="nav-icon">🔧</span>
+                                <span class="nav-text">Repair Orders</span>
+                            </a>
+                            <a href="/dealership/vin-history" class="nav-dropdown-item">
+                                <span class="nav-icon">🚗</span>
+                                <span class="nav-text">VIN History</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Desktop Navigation (kept for larger screens) -->
+                <div class="nav-sections desktop-nav">
+                    <a href="/dealership" class="nav-item active">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                    <a href="/dealership/warranty-claims" class="nav-item">
+                        <span class="nav-icon">⚠️</span>
+                        <span class="nav-text">Warranty Claims</span>
+                    </a>
+                    <a href="/dealership/campaign-reports" class="nav-item">
+                        <span class="nav-icon">📋</span>
+                        <span class="nav-text">Campaign Reports</span>
+                    </a>
+                    <a href="/dealership/ffs-inspections" class="nav-item">
+                        <span class="nav-icon">🔍</span>
+                        <span class="nav-text">FFS Inspections</span>
+                    </a>
+                    <a href="/dealership/sfs-inspections" class="nav-item">
+                        <span class="nav-icon">🔎</span>
+                        <span class="nav-text">SFS Inspections</span>
+                    </a>
+                    <a href="/dealership/pdi-inspections" class="nav-item">
+                        <span class="nav-icon">📝</span>
+                        <span class="nav-text">PDI Inspections</span>
+                    </a>
+                    <a href="/dealership/repair-orders" class="nav-item">
+                        <span class="nav-icon">🔧</span>
+                        <span class="nav-text">Repair Orders</span>
+                    </a>
+                    <a href="/dealership/vin-history" class="nav-item">
+                        <span class="nav-icon">🚗</span>
+                        <span class="nav-text">VIN History</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="dealership-main">
+            <!-- Quick Stats Cards -->
+            <section class="stats-section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon warranty">⚠️</div>
+                        <div class="stat-content">
+                            <div class="stat-number">{{ stats.total_warranty_claims or 0 }}</div>
+                            <div class="stat-label">Total Warranty Claims</div>
+                        </div>
+                        <div class="stat-trend positive">
+                            <span class="trend-icon">📈</span>
+                            <span class="trend-text">+12% this month</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon campaign">📋</div>
+                        <div class="stat-content">
+                            <div class="stat-number">{{ stats.total_campaigns or 0 }}</div>
+                            <div class="stat-label">Active Campaigns</div>
+                        </div>
+                        <div class="stat-trend positive">
+                            <span class="trend-icon">📈</span>
+                            <span class="trend-text">+8% this month</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon pdi">📝</div>
+                        <div class="stat-content">
+                            <div class="stat-number">{{ stats.total_pdis or 0 }}</div>
+                            <div class="stat-label">PDI Inspections</div>
+                        </div>
+                        <div class="stat-trend neutral">
+                            <span class="trend-icon">➡️</span>
+                            <span class="trend-text">No change</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon repair">🔧</div>
+                        <div class="stat-content">
+                            <div class="stat-number">{{ stats.total_ros or 0 }}</div>
+                            <div class="stat-label">Repair Orders</div>
+                        </div>
+                        <div class="stat-trend negative">
+                            <span class="trend-icon">📉</span>
+                            <span class="trend-text">-5% this month</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Actions -->
+            <section class="actions-section">
+                <div class="section-header">
+                    <h2>Quick Actions</h2>
+                    <p>Frequently used dealership operations</p>
+                </div>
+                
+                <div class="actions-grid">
+                    <div class="action-card" onclick="openVinSearch()">
+                        <div class="action-icon">🔍</div>
+                        <div class="action-content">
+                            <h3>VIN Lookup</h3>
+                            <p>Search complete vehicle history by VIN number</p>
+                        </div>
+                        <div class="action-arrow">→</div>
+                    </div>
+
+                    <div class="action-card" onclick="window.location.href='/dealership/warranty-claims'">
+                        <div class="action-icon">⚠️</div>
+                        <div class="action-content">
+                            <h3>New Warranty Claim</h3>
+                            <p>Submit and track warranty claims</p>
+                        </div>
+                        <div class="action-arrow">→</div>
+                    </div>
+
+                    <div class="action-card" onclick="window.location.href='/dealership/pdi-inspections'">
+                        <div class="action-icon">📝</div>
+                        <div class="action-content">
+                            <h3>PDI Reports</h3>
+                            <p>View and manage PDI inspection reports</p>
+                        </div>
+                        <div class="action-arrow">→</div>
+                    </div>
+
+                    <div class="action-card" onclick="openReportsMenu()">
+                        <div class="action-icon">📊</div>
+                        <div class="action-content">
+                            <h3>Generate Reports</h3>
+                            <p>Create custom analytics reports</p>
+                        </div>
+                        <div class="action-arrow">→</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recent Activity -->
+            <section class="activity-section">
+                <div class="section-header">
+                    <h2>Recent Activity</h2>
+                    <p>Latest dealership operations and updates</p>
+                </div>
+                
+                <div class="activity-feed">
+                    <div class="activity-item">
+                        <div class="activity-icon warranty">⚠️</div>
+                        <div class="activity-content">
+                            <div class="activity-title">New warranty claim submitted</div>
+                            <div class="activity-description">VIN: LGWEF4A59LG123456 - Tyre replacement claim</div>
+                            <div class="activity-meta">
+                                <span class="activity-dealership">Haval Central</span>
+                                <span class="activity-time">2 hours ago</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="activity-item">
+                        <div class="activity-icon pdi">📝</div>
+                        <div class="activity-content">
+                            <div class="activity-title">PDI inspection completed</div>
+                            <div class="activity-description">VIN: LGWEF4A59LG789012 - Passed without objections</div>
+                            <div class="activity-meta">
+                                <span class="activity-dealership">Haval Lahore</span>
+                                <span class="activity-time">4 hours ago</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="activity-item">
+                        <div class="activity-icon campaign">📋</div>
+                        <div class="activity-content">
+                            <div class="activity-title">Campaign service completed</div>
+                            <div class="activity-description">Free service campaign - 15 vehicles serviced</div>
+                            <div class="activity-meta">
+                                <span class="activity-dealership">Haval Karachi</span>
+                                <span class="activity-time">6 hours ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- VIN Search Modal -->
+    <div class="modal" id="vinSearchModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>VIN Number Lookup</h3>
+                <button class="modal-close" onclick="closeVinSearch()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="search-form">
+                    <label for="vinInput">Enter VIN Number:</label>
+                    <input type="text" id="vinInput" placeholder="e.g., LGWEF4A59LG123456" maxlength="17">
+                    <button class="search-btn" onclick="searchVin()">
+                        <span>🔍</span>
+                        <span>Search History</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/dealership.js') }}"></script>
+    <script>
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeDashboard();
+        });
+
+        function openVinSearch() {
+            document.getElementById('vinSearchModal').classList.add('active');
+            document.getElementById('vinInput').focus();
+        }
+
+        function closeVinSearch() {
+            document.getElementById('vinSearchModal').classList.remove('active');
+            document.getElementById('vinInput').value = '';
+        }
+
+        function searchVin() {
+            const vin = document.getElementById('vinInput').value.trim().toUpperCase();
+            if (vin.length === 17) {
+                window.location.href = `/dealership/vin-history?vin=${vin}`;
+            } else {
+                alert('Please enter a valid 17-character VIN number');
+            }
+        }
+
+        function openReportsMenu() {
+            // Show reports menu or redirect to reports page
+            alert('Reports functionality coming soon!');
+        }
+
+        // Theme toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            
+            // Update theme icon
+            const themeIcon = document.querySelector('.theme-icon');
+            themeIcon.textContent = newTheme === 'dark' ? '🌙' : '☀️';
+            
+            // Update logos
+            const headerLogo = document.getElementById('headerLogo');
+            const loadingLogo = document.getElementById('loadingLogo');
+            const logoSrc = newTheme === 'dark' ? 
+                "{{ url_for('static', filename='images/light-logo.svg') }}" : 
+                "{{ url_for('static', filename='images/dark-logo.svg') }}";
+            
+            if (headerLogo) headerLogo.src = logoSrc;
+            if (loadingLogo) loadingLogo.src = logoSrc;
+            
+            // Save preference
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // Load saved theme
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            
+            const themeIcon = document.querySelector('.theme-icon');
+            if (themeIcon) {
+                themeIcon.textContent = savedTheme === 'dark' ? '🌙' : '☀️';
+            }
+            
+            // Update logos based on saved theme
+            const headerLogo = document.getElementById('headerLogo');
+            const loadingLogo = document.getElementById('loadingLogo');
+            const logoSrc = savedTheme === 'dark' ? 
+                "{{ url_for('static', filename='images/dark-logo.svg') }}" : 
+                "{{ url_for('static', filename='images/light-logo.svg') }}";
+            
+            if (headerLogo) headerLogo.src = logoSrc;
+            if (loadingLogo) loadingLogo.src = logoSrc;
+        });
+    </script>
+</body>
+</html>

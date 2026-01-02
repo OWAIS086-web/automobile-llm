@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Advanced Analytics - Insights AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/analysis.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-background">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="modern-nav">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <img src="{{ url_for('static', filename='images/dark-logo.svg') }}" alt="Insights AI" class="brand-logo" id="navLogo">
+                <span class="brand-text">Insights AI</span>
+                <span class="brand-badge">ANALYTICS</span>
+            </div>
+            
+            <div class="nav-actions">
+                <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+                    <span id="themeIcon">☀️</span>
+                </button>
+                <a href="{{ url_for('chatbot_advanced') }}" class="nav-link">
+                    <span>🤖 AI Chat</span>
+                </a>
+                {% if selected_company == 'haval' %}
+                <a href="{{ url_for('view_whatsapp') }}" class="nav-link">
+                    <span>💬 WhatsApp</span>
+                </a>
+                {% endif %}
+                <a href="{{ url_for('logout') }}" class="nav-cta">
+                    <span>Logout</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="analytics-container">
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">{{ company_name }} Analytics Dashboard</h1>
+                <p class="page-subtitle">Comprehensive insights from {{ company_name }} data - sentiment analysis, complaint tracking, and usage patterns</p>
+                
+                <!-- Date Filter Controls -->
+                <div class="date-filter-section">
+                    <div class="filter-group">
+                        <label for="dateFrom" style="color: #865df5;">📅 From:</label>
+                        <input type="date" id="dateFrom" class="date-input">
+                    </div>
+                    <div class="filter-group">
+                        <label for="dateTo" style="color: #865df5;">📅 To:</label>
+                        <input type="date" id="dateTo" class="date-input">
+                    </div>
+                    <div class="filter-actions">
+                        <button class="filter-btn" onclick="clearDateFilter()" style="color: #865df5;">🗑️ Clear</button>
+                        <button class="filter-btn primary" onclick="applyDateFilter()" style="color: #865df5;">✨ Apply Filter</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card ai-processing">
+                    <div class="neural-bg"></div>
+                    <div class="stat-header">
+                        <span class="stat-icon">💬</span>
+                    </div>
+                    <div class="stat-value">{{ total_posts }}</div>
+                    <div class="stat-label">Forum Posts Analyzed</div>
+                </div>
+
+                {% if selected_company == 'haval' %}
+                <div class="stat-card ai-processing">
+                    <div class="neural-bg"></div>
+                    <div class="stat-header">
+                        <span class="stat-icon">📱</span>
+                    </div>
+                    <div class="stat-value">{{ whatsapp_stats.total_messages or 0 }}</div>
+                    <div class="stat-label">WhatsApp Messages</div>
+                </div>
+                {% endif %}
+
+                <div class="stat-card ai-processing">
+                    <div class="neural-bg"></div>
+                    <div class="stat-header">
+                        <span class="stat-icon">🤖</span>
+                    </div>
+                    <div class="stat-value">{{ chatbot_usage.values() | sum if chatbot_usage else 0 }}</div>
+                    <div class="stat-label">Chatbot Interactions</div>
+                </div>
+
+                <div class="stat-card ai-processing">
+                    <div class="neural-bg"></div>
+                    <div class="stat-header">
+                        <span class="stat-icon">⚠️</span>
+                    </div>
+                    <div class="stat-value">
+                        {% if selected_company == 'haval' %}
+                            {{ (pakwheels_complaints | length) + (whatsapp_complaints | length) }}
+                        {% else %}
+                            {{ pakwheels_complaints | length }}
+                        {% endif %}
+                    </div>
+                    <div class="stat-label">Total Complaints</div>
+                </div>
+
+                <div class="stat-card ai-processing">
+                    <div class="neural-bg"></div>
+                    <div class="stat-header">
+                        <span class="stat-icon">😊</span>
+                    </div>
+                    <div class="stat-value">{{ sentiment_analysis.positive if sentiment_analysis else 0 }}</div>
+                    <div class="stat-label">Positive Posts</div>
+                </div>
+
+                <div class="stat-card ai-processing">
+                    <div class="neural-bg"></div>
+                    <div class="stat-header">
+                        <span class="stat-icon">😞</span>
+                    </div>
+                    <div class="stat-value">{{ sentiment_analysis.negative if sentiment_analysis else 0 }}</div>
+                    <div class="stat-label">Negative Posts</div>
+                </div>
+            </div>
+
+            <!-- Charts Grid -->
+            <div class="chart-grid">
+                <!-- Sentiment Analysis Chart -->
+                {% if sentiment_analysis %}
+                <div class="chart-card ai-processing">
+                    <div class="neural-bg"></div>
+                    <div class="chart-header">
+                        <div>
+                            <div class="chart-title">Sentiment Analysis</div>
+                            <div class="chart-subtitle">Positive vs Negative vs Neutral posts</div>
+                        </div>
+                        <button class="chart-btn" onclick="downloadChart('sentimentChart')">📥 Download</button>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="sentimentChart"></canvas>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Chatbot Usage Chart -->
+                {% if chatbot_usage %}
+                <div class="chart-card ai-processing">
+                    <div class="neural-bg"></div>
+                    <div class="chart-header">
+                        <div>
+                            <div class="chart-title">Chatbot Usage by Mode</div>
+                            <div class="chart-subtitle">Distribution of queries across different modes</div>
+                        </div>
+                        <button class="chart-btn" onclick="downloadChart('chatbotChart')">📥 Download</button>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="chatbotChart"></canvas>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- WhatsApp Message Types -->
+                {% if selected_company == 'haval' and whatsapp_stats and whatsapp_stats.message_types %}
+                <div class="chart-card ai-processing">
+                    <div class="neural-bg"></div>
+                    <div class="chart-header">
+                        <div>
+                            <div class="chart-title">WhatsApp Message Types</div>
+                            <div class="chart-subtitle">Complaints vs Queries vs Chat</div>
+                        </div>
+                        <button class="chart-btn" onclick="downloadChart('whatsappChart')">📥 Download</button>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="whatsappChart"></canvas>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Most Popular Queries -->
+                {% if popular_queries %}
+                <div class="chart-card full-width ai-processing">
+                    <div class="neural-bg"></div>
+                    <div class="chart-header">
+                        <div>
+                            <div class="chart-title">Most Asked Questions</div>
+                            <div class="chart-subtitle">Top queries from both PakWheels and WhatsApp users</div>
+                        </div>
+                        <button class="chart-btn" onclick="downloadChart('queriesChart')">📥 Download</button>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="queriesChart"></canvas>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Complaints Section -->
+            <div class="complaint-grid">
+                <!-- PakWheels Complaints -->
+                {% if pakwheels_complaints %}
+                <div class="complaint-card">
+                    <div class="complaint-header">
+                        🚗 PakWheels Complaints ({{ pakwheels_complaints | length }})
+                    </div>
+                    <div class="complaint-list">
+                        {% for complaint in pakwheels_complaints %}
+                        <div class="complaint-item" data-date="{{ complaint.date }}">
+                            <div class="complaint-meta">
+                                <span class="complaint-author">{{ complaint.author }}</span>
+                                <span class="complaint-date">{{ complaint.date }}</span>
+                            </div>
+                            <div class="complaint-text">{{ complaint.text }}...</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- WhatsApp Complaints -->
+                {% if selected_company == 'haval' and whatsapp_complaints %}
+                <div class="complaint-card">
+                    <div class="complaint-header">
+                        📱 WhatsApp Complaints ({{ whatsapp_complaints | length }})
+                    </div>
+                    <div class="complaint-list">
+                        {% for complaint in whatsapp_complaints %}
+                        <div class="complaint-item" data-date="{{ complaint.date }}">
+                            <div class="complaint-meta">
+                                <span class="complaint-author">{{ complaint.customer }}</span>
+                                <span class="complaint-date">{{ complaint.date }}</span>
+                            </div>
+                            <div class="complaint-text">{{ complaint.message }}...</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Process Logs Section -->
+            <div class="chart-card full-width" id="processLogsSection" style="display: none;">
+                <div class="chart-header">
+                    <div>
+                        <div class="chart-title">Real-Time Process Logs</div>
+                        <div class="chart-subtitle">Live scraping and processing status from server</div>
+                    </div>
+                    <div class="log-controls">
+                        <button class="chart-btn" onclick="clearProcessLogs()">🗑️ Clear</button>
+                        <button class="chart-btn" onclick="toggleAutoScroll()" id="autoScrollBtn">📜 Auto-scroll: ON</button>
+                    </div>
+                </div>
+                <div class="process-logs-container">
+                    <div class="logs-content" id="processLogsContent">
+                        <div class="log-entry info">
+                            <span class="log-time">[--:--:--]</span>
+                            <span class="log-message">Loading process logs...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="action-btn" onclick="generateReport()">
+                    <span>📊</span>
+                    <span>Generate Report</span>
+                </button>
+                <button class="action-btn secondary" onclick="refreshData()">
+                    <span>🔄</span>
+                    <span>Refresh Data</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data for JavaScript -->
+    <script>
+        // Data variables for charts - with fallbacks
+        {% if sentiment_analysis %}
+        const sentimentData = {{ sentiment_analysis | tojson | safe }};
+        {% else %}
+        const sentimentData = null;
+        {% endif %}
+        
+        {% if chatbot_usage %}
+        const chatbotData = {{ chatbot_usage | tojson | safe }};
+        {% else %}
+        const chatbotData = null;
+        {% endif %}
+        
+        {% if selected_company == 'haval' and whatsapp_stats and whatsapp_stats.message_types %}
+        const whatsappData = {{ whatsapp_stats.message_types | tojson | safe }};
+        {% else %}
+        const whatsappData = null;
+        {% endif %}
+        
+        {% if popular_queries %}
+        const queriesData = {{ popular_queries | tojson | safe }};
+        {% else %}
+        const queriesData = null;
+        {% endif %}
+        
+        const companyName = "{{ company_name }}";
+        const selectedCompany = "{{ selected_company }}";
+        
+        // Make company data available globally
+        window.companyName = companyName;
+        window.selectedCompany = selectedCompany;
+        
+        // Debug: Log all data variables
+        console.log('=== DATA VARIABLES DEBUG ===');
+        console.log('sentimentData:', sentimentData);
+        console.log('chatbotData:', chatbotData);
+        console.log('whatsappData:', whatsappData);
+        console.log('queriesData:', queriesData);
+        console.log('companyName:', companyName);
+        console.log('=== END DATA VARIABLES DEBUG ===');
+        
+        // Add page load indicator
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                console.log('✅ Analysis page loaded successfully');
+                // Show success notification after page loads
+                if (typeof showNotification === 'function') {
+                    showNotification('Analytics dashboard loaded successfully!', 'success');
+                }
+            }, 1000);
+        });
+    </script>
+    
+    <!-- External JavaScript -->
+    <script src="{{ url_for('static', filename='js/analysis.js') }}"></script>
+</body>
+</html>

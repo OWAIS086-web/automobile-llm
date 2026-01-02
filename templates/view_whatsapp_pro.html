@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>WhatsApp Messages - Insights AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/whatsapp.css') }}">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-background">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="modern-nav">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <img src="{{ url_for('static', filename='images/dark-logo.svg') }}" alt="Insights AI" class="brand-logo" id="navLogo">
+                <span class="brand-text">Insights AI</span>
+                <span class="brand-badge">WHATSAPP</span>
+            </div>
+            
+            <div class="nav-actions">
+                <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+                    <span id="themeIcon">☀️</span>
+                </button>
+                <a href="{{ url_for('chatbot_advanced') }}" class="nav-link">
+                    <span>🤖 AI Chat</span>
+                </a>
+                <a href="{{ url_for('analysis') }}" class="nav-link">
+                    <span>📈 Analytics</span>
+                </a>
+                <a href="{{ url_for('logout') }}" class="nav-cta">
+                    <span>Logout</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+    <div class="whatsapp-container">
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">WhatsApp Messages</h1>
+                <p class="page-subtitle">Customer queries and complaints from WATI API</p>
+                
+                <!-- Date Filter Controls -->
+                <div class="date-filter-section">
+                    <div class="filter-group">
+                        <label for="dateFrom" >📅 From:</label>
+                        <input type="date" id="dateFrom" class="date-input" onchange="applyDateFilter()">
+                    </div>
+                    <div class="filter-group">
+                        <label for="dateTo" >📅 To:</label>
+                        <input type="date" id="dateTo" class="date-input" onchange="applyDateFilter()">
+                    </div>
+                    <div class="filter-group">
+                        <label for="messageType" >📋 Type:</label>
+                        <select id="messageType" class="date-input" onchange="applyFilters()">
+                            <option value="all" {% if message_type_filter == 'all' %}selected{% endif %}>All Messages</option>
+                            <option value="complaint" {% if message_type_filter == 'complaint' %}selected{% endif %}>Complaints Only</option>
+                            <option value="query" {% if message_type_filter == 'query' %}selected{% endif %}>Queries Only</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="customerSearch" >👤 Customer:</label>
+                        <input type="text" id="customerSearch" class="date-input" placeholder="Search customer..." value="{{ customer_filter }}" oninput="applyFilters()">
+                    </div>
+                    <div class="filter-actions">
+                        <button class="filter-btn" onclick="clearAllFilters()" >🗑️ Clear</button>
+                        <button class="filter-btn primary" onclick="applyFilters()" >✨ Apply Filter</button>
+                    </div>
+                </div>
+                
+                <!-- Loading indicator -->
+                <div id="loadingIndicator" style="display: none; margin-top: 16px; padding: 12px; background: var(--bg-secondary); border-radius: 8px; text-align: center;">
+                    <span>🔄 Loading WhatsApp messages...</span>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card whatsapp-processing">
+                    <div class="whatsapp-bg"></div>
+                    <div class="stat-header">
+                        <span class="stat-icon">💬</span>
+                    </div>
+                    <div class="stat-value">{{ stats.total_messages }}</div>
+                    <div class="stat-label">Total Messages</div>
+                </div>
+
+                <div class="stat-card whatsapp-processing">
+                    <div class="whatsapp-bg"></div>
+                    <div class="stat-header">
+                        <span class="stat-icon">❗</span>
+                    </div>
+                    <div class="stat-value complaint">{{ stats.total_complaints }}</div>
+                    <div class="stat-label">Complaints</div>
+                </div>
+
+                <div class="stat-card whatsapp-processing">
+                    <div class="whatsapp-bg"></div>
+                    <div class="stat-header">
+                        <span class="stat-icon">❓</span>
+                    </div>
+                    <div class="stat-value query">{{ stats.total_queries }}</div>
+                    <div class="stat-label">Queries</div>
+                </div>
+
+                <div class="stat-card whatsapp-processing">
+                    <div class="whatsapp-bg"></div>
+                    <div class="stat-header">
+                        <span class="stat-icon">👥</span>
+                    </div>
+                    <div class="stat-value">{{ stats.unique_customers }}</div>
+                    <div class="stat-label">Unique Customers</div>
+                </div>
+            </div>
+
+                {% if messages %}
+                {% set customers = {} %}
+                {% for message in messages %}
+                    {% if message.customer_name not in customers %}
+                        {% set _ = customers.update({message.customer_name: []}) %}
+                    {% endif %}
+                    {% set _ = customers[message.customer_name].append(message) %}
+                {% endfor %}
+                
+                <div class="messages-grid">
+                    {% for customer_name, customer_messages in customers.items() %}
+                    <a href="{{ url_for('view_whatsapp_by_customer', customer_name=customer_name) }}" class="message-card conversation-card" data-date="{{ customer_messages[0].timestamp[:10] if customer_messages[0].timestamp else '' }}" data-type="{{ customer_messages[0].message_type }}" data-customer="{{ customer_name.lower() }}">
+                        <div class="message-header">
+                            <div class="customer-info">
+                                <div class="customer-avatar">{{ customer_name[0].upper() }}</div>
+                                <div style="flex: 1;">
+                                    <div class="customer-name">{{ customer_name }}</div>
+                                    <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">
+                                        📞 {{ customer_messages[0].phone_number }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 4px;">
+                                    {{ customer_messages|length }} message{{ 's' if customer_messages|length > 1 else '' }}
+                                </div>
+                                <div style="display: flex; gap: 4px; justify-content: flex-end;">
+                                    {% set complaints = customer_messages|selectattr('message_type', 'equalto', 'complaint')|list %}
+                                    {% set queries = customer_messages|selectattr('message_type', 'equalto', 'query')|list %}
+                                    {% if complaints|length > 0 %}
+                                    <span class="message-type-badge complaint" style="font-size: 10px; padding: 2px 6px;">
+                                        ❗ {{ complaints|length }}
+                                    </span>
+                                    {% endif %}
+                                    {% if queries|length > 0 %}
+                                    <span class="message-type-badge query" style="font-size: 10px; padding: 2px 6px;">
+                                        ❓ {{ queries|length }}
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="conversation-preview">
+                            {% for msg in customer_messages[:3] %}
+                            <div class="preview-message {{ msg.message_type }}" style="margin-bottom: 8px;">
+                                <div style="display: flex; align-items: start; gap: 8px;">
+                                    <span style="font-size: 12px; opacity: 0.7;">
+                                        {% if msg.message_type == 'complaint' %}❗{% else %}❓{% endif %}
+                                    </span>
+                                    <div style="flex: 1; font-size: 13px; color: var(--text-primary); line-height: 1.4;">
+                                        {{ msg.message[:100] }}{% if msg.message|length > 100 %}...{% endif %}
+                                    </div>
+                                </div>
+                                <div style="font-size: 10px; color: var(--text-secondary); margin-top: 4px; margin-left: 20px;">
+                                    {{ msg.timestamp[:19] if msg.timestamp else 'N/A' }}
+                                </div>
+                            </div>
+                            {% endfor %}
+                            {% if customer_messages|length > 3 %}
+                            <div style="text-align: center; font-size: 11px; color: var(--text-secondary); margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border-color);">
+                                +{{ customer_messages|length - 3 }} more message{{ 's' if customer_messages|length - 3 > 1 else '' }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="message-footer">
+                            <div style="font-size: 11px; color: var(--text-secondary);">
+                                Last message: {{ customer_messages[0].timestamp[:19] if customer_messages[0].timestamp else 'N/A' }}
+                            </div>
+                        </div>
+                        <div style="text-align: center; margin-top: 12px; font-size: 12px; color: var(--primary-color);">
+                            👆 Click to view full conversation
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">💬</div>
+                    <h3 class="empty-title">No WhatsApp Messages</h3>
+                    <p class="empty-text">
+                        {% if message_type_filter != 'all' or customer_filter or date_filter != 'all' %}
+                            No messages match your current filters. Try adjusting the filters or 
+                            <a href="{{ url_for('view_whatsapp') }}">view all messages</a>.
+                        {% else %}
+                            No WhatsApp messages found. Data can be fetched from:<br>
+                            • WATI API (fetch recent messages)<br><br>
+                            Use the WATI API integration in the main dashboard to load data.
+                        {% endif %}
+                    </p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/whatsapp.js') }}"></script>
+</body>
+</html>

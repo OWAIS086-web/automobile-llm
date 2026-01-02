@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Repair Orders - Dealership Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dealership.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- Main Container -->
+    <div class="dealership-container">
+        <!-- Header -->
+        <header class="dealership-header">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="logo-section">
+                        <img src="{{ url_for('static', filename='images/dark-logo.svg') }}" alt="Logo" class="header-logo">
+                        <div class="header-title">
+                            <h1>Repair Orders</h1>
+                            <p>RO Management & Vehicle Service Records</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="header-right">
+                    <div class="header-actions">
+                        <button class="header-btn" onclick="toggleTheme()">
+                            <span class="theme-icon">🌙</span>
+                        </button>
+                        <button class="header-btn" onclick="window.location.href='/chatbot_advanced'">
+                            <span>💬</span>
+                            <span>Chat AI</span>
+                        </button>
+                        <div class="user-menu">
+                            <button class="user-btn">
+                                <span class="user-avatar">{{ user.username[0].upper() if user else 'U' }}</span>
+                                <span class="user-name">{{ user.username if user else 'User' }}</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="dealership-nav">
+            <div class="nav-content">
+                <div class="nav-sections">
+                    <a href="/dealership" class="nav-item">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                    <a href="/dealership/warranty-claims" class="nav-item">
+                        <span class="nav-icon">⚠️</span>
+                        <span class="nav-text">Warranty Claims</span>
+                    </a>
+                    <a href="/dealership/campaign-reports" class="nav-item">
+                        <span class="nav-icon">📋</span>
+                        <span class="nav-text">Campaign Reports</span>
+                    </a>
+                    <a href="/dealership/ffs-inspections" class="nav-item">
+                        <span class="nav-icon">🔍</span>
+                        <span class="nav-text">FFS Inspections</span>
+                    </a>
+                    <a href="/dealership/sfs-inspections" class="nav-item">
+                        <span class="nav-icon">🔎</span>
+                        <span class="nav-text">SFS Inspections</span>
+                    </a>
+                    <a href="/dealership/pdi-inspections" class="nav-item">
+                        <span class="nav-icon">📝</span>
+                        <span class="nav-text">PDI Inspections</span>
+                    </a>
+                    <a href="/dealership/repair-orders" class="nav-item active">
+                        <span class="nav-icon">🔧</span>
+                        <span class="nav-text">Repair Orders</span>
+                    </a>
+                    <a href="/dealership/vin-history" class="nav-item">
+                        <span class="nav-icon">🚗</span>
+                        <span class="nav-text">VIN History</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="dealership-main">
+            <!-- Filters Section -->
+            <section class="filters-section">
+                <div class="section-header">
+                    <h2>Repair Order Filters</h2>
+                    <p>Filter repair orders by VIN, RO number, dealership, and status</p>
+                </div>
+                
+                <div class="filters-grid">
+                    <div class="filter-group">
+                        <label for="vinFilter">VIN Number</label>
+                        <input type="text" id="vinFilter" placeholder="Enter VIN number" maxlength="17" value="{{ filters.vin or '' }}" onchange="applyFilters()">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="roNumberFilter">RO Number</label>
+                        <input type="text" id="roNumberFilter" placeholder="Enter RO number" value="{{ filters.ro_number or '' }}" onchange="applyFilters()">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="dealershipFilter">Dealership</label>
+                        <select id="dealershipFilter" onchange="applyFilters()">
+                            <option value="">All Dealerships</option>
+                            <option value="Haval Central" {{ 'selected' if filters.dealership == 'Haval Central' else '' }}>Haval Central</option>
+                            <option value="Haval Lahore" {{ 'selected' if filters.dealership == 'Haval Lahore' else '' }}>Haval Lahore</option>
+                            <option value="Haval Karachi" {{ 'selected' if filters.dealership == 'Haval Karachi' else '' }}>Haval Karachi</option>
+                            <option value="Haval Islamabad" {{ 'selected' if filters.dealership == 'Haval Islamabad' else '' }}>Haval Islamabad</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="statusFilter">Status</label>
+                        <select id="statusFilter" onchange="applyFilters()">
+                            <option value="">All Status</option>
+                            <option value="open">Open</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="warrantyFilter">Warranty</label>
+                        <select id="warrantyFilter" onchange="applyFilters()">
+                            <option value="">All</option>
+                            <option value="true">Warranty</option>
+                            <option value="false">Non-Warranty</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-actions">
+                        <button class="filter-btn clear" onclick="clearFilters()">
+                            <span>🗑️</span>
+                            <span>Clear</span>
+                        </button>
+                        <button class="filter-btn export" onclick="exportData('repair_orders')">
+                            <span>📤</span>
+                            <span>Export</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RO Statistics -->
+            <section class="stats-section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">🔧</div>
+                        <div class="stat-content">
+                            <div class="stat-number">{{ stats.total_ros or 0 }}</div>
+                            <div class="stat-label">Total Repair Orders</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">⚠️</div>
+                        <div class="stat-content">
+                            <div class="stat-number">{{ stats.warranty_ros or 0 }}</div>
+                            <div class="stat-label">Warranty ROs</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-content">
+                            <div class="stat-number">{{ repair_orders|length or 0 }}</div>
+                            <div class="stat-label">Filtered Results</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-content">
+                            <div class="stat-number">PKR {{ "{:,.0f}".format(stats.avg_cost) if stats.avg_cost else 0 }}</div>
+                            <div class="stat-label">Average Cost</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RO Data Table -->
+            <section class="data-section">
+                <div class="section-header">
+                    <h2>Repair Order Records</h2>
+                    <p>Detailed repair order and service records</p>
+                </div>
+                
+                <div class="data-table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>RO Number</th>
+                                <th>VIN Number</th>
+                                <th>Dealership</th>
+                                <th>Customer</th>
+                                <th>Issue Description</th>
+                                <th>RO Date</th>
+                                <th>Total Cost</th>
+                                <th>Status</th>
+                                <th>Warranty</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if repair_orders %}
+                                {% for ro in repair_orders %}
+                                <tr>
+                                    <td>
+                                        <div class="cell-content">
+                                            <strong class="ro-number">{{ ro.ro_number or 'N/A' }}</strong>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cell-content">
+                                            <strong class="vin-number">{{ ro.vin_number or 'N/A' }}</strong>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cell-content">
+                                            <span class="dealership-badge">{{ ro.dealership_name or 'N/A' }}</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cell-content">
+                                            <div class="customer-info">
+                                                <strong>{{ ro.customer_name or 'N/A' }}</strong>
+                                                {% if ro.customer_phone %}
+                                                <small>{{ ro.customer_phone }}</small>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cell-content">
+                                            <div class="issue-preview">
+                                                {{ (ro.issue_description or 'No description')[:50] }}
+                                                {% if ro.issue_description and ro.issue_description|length > 50 %}...{% endif %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cell-content">
+                                            {{ ro.ro_date or 'N/A' }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cell-content">
+                                            <span class="cost-amount">PKR {{ "{:,.2f}".format(ro.total_cost) if ro.total_cost else '0.00' }}</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cell-content">
+                                            <span class="status-badge {{ ro.status or 'open' }}">
+                                                {{ ro.status.replace('_', ' ').title() if ro.status else 'Open' }}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cell-content">
+                                            {% if ro.warranty_applicable %}
+                                            <span class="warranty-badge warranty">Warranty</span>
+                                            {% else %}
+                                            <span class="warranty-badge non-warranty">Non-Warranty</span>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cell-actions">
+                                            <button class="action-btn view" onclick="viewRODetails('{{ ro.ro_number }}')">
+                                                <span>👁️</span>
+                                            </button>
+                                            <button class="action-btn edit" onclick="editRO('{{ ro.id }}')">
+                                                <span>✏️</span>
+                                            </button>
+                                            <button class="action-btn print" onclick="printRO('{{ ro.ro_number }}')">
+                                                <span>🖨️</span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                            <tr>
+                                <td colspan="10" class="no-data">
+                                    <div class="no-data-content">
+                                        <span class="no-data-icon">🔧</span>
+                                        <h3>No Repair Order Data</h3>
+                                        <p>No repair orders found matching your criteria.</p>
+                                        <button class="add-btn" onclick="addNewRO()">
+                                            <span>➕</span>
+                                            <span>Create New RO</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- RO Analytics -->
+            <section class="analytics-section">
+                <div class="section-header">
+                    <h2>Repair Order Analytics</h2>
+                    <p>Visual insights into repair order performance and trends</p>
+                </div>
+                
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>ROs by Dealership</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="dealershipROChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>RO Status Distribution</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="roStatusChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Monthly Revenue Trend</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Warranty vs Non-Warranty</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="warrantyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RO Insights -->
+            <section class="insights-section">
+                <div class="section-header">
+                    <h2>Key Insights</h2>
+                    <p>Important findings from repair order analysis</p>
+                </div>
+                
+                <div class="insights-grid">
+                    <div class="insight-card">
+                        <div class="insight-icon">⚡</div>
+                        <div class="insight-content">
+                            <h3>Average Turnaround</h3>
+                            <p>Most repair orders are completed within 3-5 business days, with warranty claims taking slightly longer.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="insight-card">
+                        <div class="insight-icon">💡</div>
+                        <div class="insight-content">
+                            <h3>Common Issues</h3>
+                            <p>Electrical and engine-related issues account for 60% of all repair orders across all dealerships.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="insight-card">
+                        <div class="insight-icon">📈</div>
+                        <div class="insight-content">
+                            <h3>Revenue Growth</h3>
+                            <p>Service revenue has increased by 15% compared to last quarter, driven by increased vehicle deliveries.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="insight-card">
+                        <div class="insight-icon">🎯</div>
+                        <div class="insight-content">
+                            <h3>Customer Satisfaction</h3>
+                            <p>95% of repair orders are completed successfully on first attempt, indicating high service quality.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/dealership.js') }}"></script>
+    <script>
+        // RO-specific functions
+        function viewRODetails(roNumber) {
+            console.log('Viewing RO details:', roNumber);
+            showNotification('RO details view coming soon!', 'info');
+        }
+
+        function editRO(roId) {
+            console.log('Editing RO:', roId);
+            showNotification('RO editing coming soon!', 'info');
+        }
+
+        function printRO(roNumber) {
+            console.log('Printing RO:', roNumber);
+            showNotification('RO printing coming soon!', 'info');
+        }
+
+        function addNewRO() {
+            console.log('Adding new repair order');
+            showNotification('Create new RO functionality coming soon!', 'info');
+        }
+
+        function clearFilters() {
+            document.getElementById('vinFilter').value = '';
+            document.getElementById('roNumberFilter').value = '';
+            document.getElementById('dealershipFilter').value = '';
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('warrantyFilter').value = '';
+            applyFilters();
+        }
+
+        // Initialize charts
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeROCharts();
+        });
+
+        function initializeROCharts() {
+            // Dealership RO chart
+            const dealershipData = {
+                labels: ['Haval Central', 'Haval Lahore', 'Haval Karachi', 'Haval Islamabad'],
+                datasets: [{
+                    label: 'Repair Orders',
+                    data: [125, 98, 87, 76],
+                    backgroundColor: 'rgba(124, 58, 237, 0.8)',
+                    borderColor: 'rgba(124, 58, 237, 1)',
+                    borderWidth: 2
+                }]
+            };
+
+            createChart('dealershipROChart', 'bar', dealershipData);
+
+            // RO Status distribution
+            const statusData = {
+                labels: ['Completed', 'In Progress', 'Open', 'Cancelled'],
+                datasets: [{
+                    data: [65, 20, 12, 3],
+                    backgroundColor: [
+                        'rgba(16, 185, 129, 0.8)',
+                        'rgba(245, 158, 11, 0.8)',
+                        'rgba(59, 130, 246, 0.8)',
+                        'rgba(239, 68, 68, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(16, 185, 129, 1)',
+                        'rgba(245, 158, 11, 1)',
+                        'rgba(59, 130, 246, 1)',
+                        'rgba(239, 68, 68, 1)'
+                    ],
+                    borderWidth: 2
+                }]
+            };
+
+            createChart('roStatusChart', 'doughnut', statusData);
+
+            // Monthly revenue trend
+            const revenueData = {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Revenue (PKR)',
+                    data: [2500000, 2800000, 2650000, 3200000, 3100000, 3500000],
+                    backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                    borderColor: 'rgba(16, 185, 129, 1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            };
+
+            createChart('revenueChart', 'line', revenueData);
+
+            // Warranty vs Non-warranty
+            const warrantyData = {
+                labels: ['Warranty', 'Non-Warranty'],
+                datasets: [{
+                    data: [35, 65],
+                    backgroundColor: [
+                        'rgba(59, 130, 246, 0.8)',
+                        'rgba(168, 85, 247, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(59, 130, 246, 1)',
+                        'rgba(168, 85, 247, 1)'
+                    ],
+                    borderWidth: 2
+                }]
+            };
+
+            createChart('warrantyChart', 'doughnut', warrantyData);
+        }
+
+        // Theme toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            
+            const themeIcon = document.querySelector('.theme-icon');
+            themeIcon.textContent = newTheme === 'dark' ? '🌙' : '☀️';
+            
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // Load saved theme
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            
+            const themeIcon = document.querySelector('.theme-icon');
+            if (themeIcon) {
+                themeIcon.textContent = savedTheme === 'dark' ? '🌙' : '☀️';
+            }
+        });
+    </script>
+</body>
+</html>

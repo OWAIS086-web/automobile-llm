@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help Center - Insights AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/help.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-background">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+        <div class="floating-grid"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="modern-nav">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <img src="{{ url_for('static', filename='images/dark-logo.svg') }}" alt="Insights AI" class="brand-logo" id="navLogo">
+                <span class="brand-text">Insights AI</span>
+                <span class="brand-badge">HELP</span>
+            </div>
+            
+            <div class="nav-actions">
+                <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+                    <span id="themeIcon">☀️</span>
+                </button>
+                <a href="{{ url_for('login') }}" class="nav-link">
+                    <span>Sign In</span>
+                </a>
+                <a href="{{ url_for('register') }}" class="nav-cta">
+                    <span>Get Started</span>
+                    <div class="cta-glow"></div>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="help-hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <span class="title-line">How can we</span>
+                    <span class="title-gradient">help you today?</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Everything you need to know about using Insights AI to transform your business with intelligent analytics.
+                </p>
+                
+                <div class="search-container">
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" placeholder="Search for help articles, guides, or tutorials..." class="search-input">
+                        <button class="search-btn">Search</button>
+                    </div>
+                </div>
+                
+                <div class="quick-links">
+                    <span class="quick-text">Popular searches:</span>
+                    <a href="#signup" class="quick-link">How to sign up</a>
+                    <a href="#chatbot" class="quick-link">Using the chatbot</a>
+                    <a href="#analytics" class="quick-link">Analytics dashboard</a>
+                    <a href="#integrations" class="quick-link">Integrations</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Getting Started Section -->
+    <section class="help-section" id="getting-started">
+        <div class="help-container">
+            <div class="section-header">
+                <div class="section-badge">
+                    <span class="badge-pulse"></span>
+                    <span>Getting Started</span>
+                </div>
+                <h2 class="section-title">Quick Start Guide</h2>
+                <p class="section-subtitle">
+                    Get up and running with Insights AI in just a few minutes
+                </p>
+            </div>
+            
+            <div class="steps-grid">
+                <div class="step-card" id="signup">
+                    <div class="step-header">
+                        <div class="step-number">01</div>
+                        <h3 class="step-title">Create Your Account</h3>
+                    </div>
+                    <div class="step-content">
+                        <p class="step-description">Sign up for your free Insights AI account and get started immediately.</p>
+                        <div class="step-details">
+                            <h4>How to Sign Up:</h4>
+                            <ul class="step-list">
+                                <li>Click the "Get Started" button on the homepage</li>
+                                <li>Enter your email address and create a secure password</li>
+                                <li>Verify your email address</li>
+                                <li>Complete your profile setup</li>
+                                <li>Choose your plan (free trial available)</li>
+                            </ul>
+                        </div>
+                        <div class="step-visual">
+                            <div class="signup-mockup">
+                                <div class="mockup-header">Sign Up Form</div>
+                                <div class="form-field">📧 Email Address</div>
+                                <div class="form-field">🔒 Password</div>
+                                <div class="form-button">Create Account</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-number">02</div>
+                        <h3 class="step-title">Login & Dashboard</h3>
+                    </div>
+                    <div class="step-content">
+                        <p class="step-description">Access your personalized dashboard and explore the interface.</p>
+                        <div class="step-details">
+                            <h4>Logging In:</h4>
+                            <ul class="step-list">
+                                <li>Go to the login page</li>
+                                <li>Enter your email and password</li>
+                                <li>Click "Sign In" to access your dashboard</li>
+                                <li>Explore the main navigation menu</li>
+                                <li>Familiarize yourself with the layout</li>
+                            </ul>
+                        </div>
+                        <div class="step-visual">
+                            <div class="dashboard-mockup">
+                                <div class="mockup-header">Dashboard Overview</div>
+                                <div class="dashboard-grid">
+                                    <div class="dashboard-item">📊 Analytics</div>
+                                    <div class="dashboard-item">💬 Chatbot</div>
+                                    <div class="dashboard-item">⚙️ Settings</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step-card" id="chatbot">
+                    <div class="step-header">
+                        <div class="step-number">03</div>
+                        <h3 class="step-title">Using the AI Chatbot</h3>
+                    </div>
+                    <div class="step-content">
+                        <p class="step-description">Interact with our intelligent AI assistant to analyze your data.</p>
+                        <div class="step-details">
+                            <h4>Chatbot Features:</h4>
+                            <ul class="step-list">
+                                <li>Ask questions in natural language</li>
+                                <li>Upload files for analysis</li>
+                                <li>Get real-time insights and recommendations</li>
+                                <li>Export results and reports</li>
+                                <li>Save conversation history</li>
+                            </ul>
+                        </div>
+                        <div class="step-visual">
+                            <div class="chat-mockup">
+                                <div class="chat-header">
+                                    <div class="ai-avatar">🤖</div>
+                                    <span>AI Assistant</span>
+                                </div>
+                                <div class="chat-message user">Analyze my customer feedback</div>
+                                <div class="chat-message ai">I'll analyze your feedback data and provide insights...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step-card" id="analytics">
+                    <div class="step-header">
+                        <div class="step-number">04</div>
+                        <h3 class="step-title">Analytics Dashboard</h3>
+                    </div>
+                    <div class="step-content">
+                        <p class="step-description">Monitor your data and track key metrics in real-time.</p>
+                        <div class="step-details">
+                            <h4>Dashboard Features:</h4>
+                            <ul class="step-list">
+                                <li>Real-time data visualization</li>
+                                <li>Customizable charts and graphs</li>
+                                <li>Sentiment analysis reports</li>
+                                <li>Trend identification</li>
+                                <li>Export and sharing options</li>
+                            </ul>
+                        </div>
+                        <div class="step-visual">
+                            <div class="analytics-mockup">
+                                <div class="chart-container">
+                                    <div class="chart-title">Sentiment Analysis</div>
+                                    <div class="chart-bars">
+                                        <div class="bar positive" style="height: 70%"></div>
+                                        <div class="bar neutral" style="height: 25%"></div>
+                                        <div class="bar negative" style="height: 5%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Detailed Guides Section -->
+    <section class="help-section" id="guides">
+        <div class="help-container">
+            <div class="section-header">
+                <div class="section-badge">
+                    <span class="badge-pulse"></span>
+                    <span>Detailed Guides</span>
+                </div>
+                <h2 class="section-title">Comprehensive Tutorials</h2>
+                <p class="section-subtitle">
+                    In-depth guides for advanced features and use cases
+                </p>
+            </div>
+            
+            <div class="guides-grid">
+                <div class="guide-category">
+                    <div class="category-header">
+                        <div class="category-icon">🚀</div>
+                        <h3 class="category-title">Account Management</h3>
+                    </div>
+                    <div class="guide-list">
+                        <a href="#" class="guide-item">
+                            <span class="guide-title">Setting up your profile</span>
+                            <span class="guide-duration">5 min read</span>
+                        </a>
+                        <a href="#" class="guide-item">
+                            <span class="guide-title">Managing team members</span>
+                            <span class="guide-duration">8 min read</span>
+                        </a>
+                        <a href="#" class="guide-item">
+                            <span class="guide-title">Billing and subscriptions</span>
+                            <span class="guide-duration">6 min read</span>
+                        </a>
+                        <a href="#" class="guide-item">
+                            <span class="guide-title">Security settings</span>
+                            <span class="guide-duration">4 min read</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="guide-category">
+                    <div class="category-header">
+                        <div class="category-icon">🤖</div>
+                        <h3 class="category-title">AI Chatbot</h3>
+                    </div>
+                    <div class="guide-list">
+                        <a href="#" class="guide-item">
+                            <span class="guide-title">Advanced chat commands</span>
+                            <span class="guide-duration">10 min read</span>
+                        </a>
+                        <a href="#" class="guide-item">
+                            <span class="guide-title">File upload and analysis</span>
+                            <span class="guide-duration">7 min read</span>
+                        </a>
+                        <a href="#" class="guide-item">
+                            <span class="guide-title">Customizing AI responses</span>
+                            <span class="guide-duration">12 min read</span>
+                        </a>
+                        <a href="#" class="guide-item">
+                            <span class="guide-title">Conversation history</span>
+                            <span class="guide-duration">5 min read</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="guide-category">
+                    <div class="category-header">
+                        <div class="category-icon">📊</div>
+                        <h3 class="category-title">Analytics & Reports</h3>
+                    </div>
+                    <div class="guide-list">
+                        <a href="#" class="guide-item">
+                            <span class="guide-title">Creating custom dashboards</span>
+                            <span class="guide-duration">15 min read</span>
+                        </a>
+                        <a href="#" class="guide-item">
+                            <span class="guide-title">Sentiment analysis deep dive</span>
+                            <span class="guide-duration">20 min read</span>
+                        </a>
+                        <a href="#" class="guide-item">
+                            <span class="guide-title">Exporting data and reports</span>
+                            <span class="guide-duration">8 min read</span>
+                        </a>
+                        <a href="#" class="guide-item">
+                            <span class="guide-title">Setting up alerts</span>
+                            <span class="guide-duration">6 min read</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="guide-category" id="integrations">
+                    <div class="category-header">
+                        <div class="category-icon">🔗</div>
+                        <h3 class="category-title">Integrations</h3>
+                    </div>
+                    <div class="guide-list">
+                        <a href="#" class="guide-item">
+                            <span class="guide-title">API documentation</span>
+                            <span class="guide-duration">25 min read</span>
+                        </a>
+                        <a href="#" class="guide-item">
+                            <span class="guide-title">Webhook setup</span>
+                            <span class="guide-duration">12 min read</span>
+                        </a>
+                        <a href="#" class="guide-item">
+                            <span class="guide-title">Third-party connections</span>
+                            <span class="guide-duration">18 min read</span>
+                        </a>
+                        <a href="#" class="guide-item">
+                            <span class="guide-title">Data import/export</span>
+                            <span class="guide-duration">10 min read</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="help-section">
+        <div class="help-container">
+            <div class="section-header">
+                <div class="section-badge">
+                    <span class="badge-pulse"></span>
+                    <span>FAQ</span>
+                </div>
+                <h2 class="section-title">Frequently Asked Questions</h2>
+                <p class="section-subtitle">
+                    Quick answers to common questions
+                </p>
+            </div>
+            
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>How do I get started with Insights AI?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Simply sign up for a free account, verify your email, and you'll be taken to your dashboard where you can start using our AI chatbot and analytics tools immediately.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Is there a free trial available?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes! We offer a 14-day free trial with full access to all features. No credit card required to start.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>What types of data can I analyze?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>You can analyze text data including customer feedback, reviews, social media posts, surveys, support tickets, and more. We support various file formats including CSV, Excel, and JSON.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>How accurate is the AI analysis?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Our AI models achieve 95%+ accuracy in sentiment analysis and text classification. We continuously improve our models with new data and feedback.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Can I integrate with my existing tools?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Absolutely! We offer 500+ integrations including popular tools like Slack, Salesforce, HubSpot, and more. We also provide a comprehensive REST API for custom integrations.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Is my data secure?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, we take security seriously. All data is encrypted in transit and at rest, we're SOC 2 certified, and GDPR compliant. Your data is never shared with third parties.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Support Section -->
+    <section class="help-section">
+        <div class="help-container">
+            <div class="support-cta">
+                <div class="support-content">
+                    <h2 class="support-title">Still need help?</h2>
+                    <p class="support-subtitle">
+                        Our support team is here to help you succeed with Insights AI
+                    </p>
+                    <div class="support-options">
+                        <a href="#" class="support-option">
+                            <div class="option-icon">💬</div>
+                            <div class="option-content">
+                                <h4>Live Chat</h4>
+                                <p>Get instant help from our team</p>
+                            </div>
+                        </a>
+                        <a href="#" class="support-option">
+                            <div class="option-icon">📧</div>
+                            <div class="option-content">
+                                <h4>Email Support</h4>
+                                <p>Send us a detailed message</p>
+                            </div>
+                        </a>
+                        <a href="#" class="support-option">
+                            <div class="option-icon">📚</div>
+                            <div class="option-content">
+                                <h4>Documentation</h4>
+                                <p>Browse our complete docs</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="next-footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <img src="{{ url_for('static', filename='images/dark-logo.svg') }}" alt="Insights AI" class="footer-logo" id="footerLogo">
+                    <div class="brand-info">
+                        <span class="brand-text">Insights AI</span>
+                        <span class="brand-tagline">Next-Generation Intelligence</span>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <div class="link-group">
+                        <h4>Product</h4>
+                        <a href="{{ url_for('index') }}#features">Features</a>
+                        <a href="{{ url_for('index') }}#demo">Demo</a>
+                        <a href="#getting-started">Help</a>
+                        <a href="#guides">Guides</a>
+                    </div>
+                    <div class="link-group">
+                        <h4>Support</h4>
+                        <a href="#getting-started">Getting Started</a>
+                        <a href="#guides">Documentation</a>
+                        <a href="#contact">Contact</a>
+                        <a href="#status">Status</a>
+                    </div>
+                    <div class="link-group">
+                        <h4>Company</h4>
+                        <a href="#about">About Us</a>
+                        <a href="#careers">Careers</a>
+                        <a href="#blog">Blog</a>
+                        <a href="#press">Press</a>
+                    </div>
+                    <div class="link-group">
+                        <h4>Legal</h4>
+                        <a href="#privacy">Privacy</a>
+                        <a href="#terms">Terms</a>
+                        <a href="#security">Security</a>
+                        <a href="#compliance">Compliance</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <div class="footer-legal">
+                    <span>&copy; 2025 Insights AI. All rights reserved.</span>
+                    <div class="footer-social">
+                        <a href="#" class="social-link">Twitter</a>
+                        <a href="#" class="social-link">LinkedIn</a>
+                        <a href="#" class="social-link">GitHub</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        document.documentElement.classList.add('js-enabled');
+        // Theme management (same as landing page)
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            document.getElementById('themeIcon').textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+            updateLogos(savedTheme);
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            document.getElementById('themeIcon').textContent = newTheme === 'dark' ? '☀️' : '🌙';
+            updateLogos(newTheme);
+        }
+
+        function updateLogos(theme) {
+            const logos = ['navLogo', 'footerLogo'];
+            logos.forEach(logoId => {
+                const logo = document.getElementById(logoId);
+                if (logo) {
+                    const logoFile = theme === 'dark' ? 'light-logo.svg' : 'dark-logo.svg';
+                    logo.src = `/static/images/${logoFile}`;
+                }
+            });
+        }
+
+        // FAQ functionality
+        function initFAQ() {
+            const faqItems = document.querySelectorAll('.faq-item');
+            
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+                const answer = item.querySelector('.faq-answer');
+                const toggle = item.querySelector('.faq-toggle');
+                
+                question.addEventListener('click', () => {
+                    const isOpen = item.classList.contains('open');
+                    
+                    // Close all other items
+                    faqItems.forEach(otherItem => {
+                        otherItem.classList.remove('open');
+                        otherItem.querySelector('.faq-toggle').textContent = '+';
+                    });
+                    
+                    // Toggle current item
+                    if (!isOpen) {
+                        item.classList.add('open');
+                        toggle.textContent = '−';
+                    }
+                });
+            });
+        }
+
+        // Search functionality
+        function initSearch() {
+            const searchInput = document.querySelector('.search-input');
+            const searchBtn = document.querySelector('.search-btn');
+            
+            function performSearch() {
+                const query = searchInput.value.toLowerCase();
+                if (query) {
+                    // Here you would implement actual search functionality
+                    console.log('Searching for:', query);
+                    // For demo, just highlight matching sections
+                    highlightSearchResults(query);
+                }
+            }
+            
+            searchBtn.addEventListener('click', performSearch);
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+        }
+
+        function highlightSearchResults(query) {
+            // Simple search highlighting demo
+            const sections = document.querySelectorAll('.step-card, .guide-item, .faq-item');
+            sections.forEach(section => {
+                const text = section.textContent.toLowerCase();
+                if (text.includes(query)) {
+                    section.style.border = '2px solid var(--primary-color)';
+                    section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else {
+                    section.style.border = '';
+                }
+            });
+        }
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Initialize everything
+        window.addEventListener('load', () => {
+            loadTheme();
+            initFAQ();
+            initSearch();
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-in');
+                }
+            });
+        }, observerOptions);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const animateElements = document.querySelectorAll('.step-card, .guide-category, .faq-item');
+            animateElements.forEach(el => observer.observe(el));
+        });
+    </script>
+</body>
+</html>

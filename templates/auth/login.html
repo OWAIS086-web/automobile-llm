@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Sign In - Insights AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-background">
+        <div class="gradient-wave wave-1"></div>
+        <div class="gradient-wave wave-2"></div>
+        <div class="floating-particles">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
+    </div>
+
+    <div class="auth-container">
+        <!-- Navigation -->
+        <nav class="auth-nav">
+            <div class="nav-container">
+                <div class="nav-brand">
+                    <img src="{{ url_for('static', filename='images/dark-logo.svg') }}" alt="Insights AI" class="brand-logo" id="authLogo">
+                    <span class="brand-text">Insights AI</span>
+                </div>
+                <div class="nav-actions">
+                    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+                        <span id="themeIcon">☀️</span>
+                    </button>
+                    <a href="{{ url_for('index') }}" class="nav-link">← Back to Home</a>
+                </div>
+            </div>
+        </nav>
+
+        <div class="auth-content">
+            <!-- Left Side - Visual -->
+            <div class="auth-visual">
+                <div class="visual-content">
+                    <div class="ai-connection-visual">
+                        <!-- Central AI Brain -->
+                        <div class="ai-brain">
+                            <div class="brain-core">
+                                <div class="core-pulse"></div>
+                                <span class="brain-icon">🧠</span>
+                            </div>
+                            <div class="neural-network">
+                                <div class="neuron neuron-1"></div>
+                                <div class="neuron neuron-2"></div>
+                                <div class="neuron neuron-3"></div>
+                                <div class="neuron neuron-4"></div>
+                                <div class="neuron neuron-5"></div>
+                                <div class="neuron neuron-6"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Connection Lines -->
+                        <div class="connection-lines">
+                            <div class="connection-line line-1">
+                                <div class="data-pulse pulse-1"></div>
+                            </div>
+                            <div class="connection-line line-2">
+                                <div class="data-pulse pulse-2"></div>
+                            </div>
+                            <div class="connection-line line-3">
+                                <div class="data-pulse pulse-3"></div>
+                            </div>
+                            <div class="connection-line line-4">
+                                <div class="data-pulse pulse-4"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Insight Nodes -->
+                        <div class="insight-nodes">
+                            <div class="insight-node node-1">
+                                <span class="node-icon">📊</span>
+                                <div class="node-glow"></div>
+                            </div>
+                            <div class="insight-node node-2">
+                                <span class="node-icon">⚡</span>
+                                <div class="node-glow"></div>
+                            </div>
+                            <div class="insight-node node-3">
+                                <span class="node-icon">🎯</span>
+                                <div class="node-glow"></div>
+                            </div>
+                            <div class="insight-node node-4">
+                                <span class="node-icon">💡</span>
+                                <div class="node-glow"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Floating Data Particles -->
+                        <div class="data-particles">
+                            <div class="particle particle-1"></div>
+                            <div class="particle particle-2"></div>
+                            <div class="particle particle-3"></div>
+                            <div class="particle particle-4"></div>
+                            <div class="particle particle-5"></div>
+                            <div class="particle particle-6"></div>
+                        </div>
+                    </div>
+                    
+                    <h2 class="visual-title">Welcome Back!</h2>
+                    <p class="visual-subtitle">Continue your journey with AI-powered insights and analytics</p>
+                    
+                    <!-- Feature Highlights -->
+                    <div class="feature-highlights">
+                        <div class="feature-item">
+                            <span class="feature-icon">🔐</span>
+                            <span class="feature-text">Secure Access</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">⚡</span>
+                            <span class="feature-text">Instant Login</span>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">📈</span>
+                            <span class="feature-text">Your Dashboard</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Side - Form -->
+            <div class="auth-form-container">
+                <form method="POST" class="auth-form">
+                    <div class="auth-header">
+                        <h1 class="auth-title">Sign In</h1>
+                        <p class="auth-subtitle">Access your Insights AI account</p>
+                    </div>
+
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            <div class="flash-messages">
+                                {% for category, message in messages %}
+                                    <div class="flash-message {{ category }}">
+                                        <span class="flash-icon">
+                                            {% if category == 'error' %}⚠️{% else %}ℹ️{% endif %}
+                                        </span>
+                                        {{ message }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+
+                    <div class="form-group">
+                        <label for="username" class="form-label">
+                            <span class="label-icon">👤</span>
+                            Username
+                        </label>
+                        <div class="input-container">
+                            <input type="text" id="username" name="username" class="form-input" 
+                                   placeholder="Enter your username" required>
+                            <div class="input-focus-border"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password" class="form-label">
+                            <span class="label-icon">🔒</span>
+                            Password
+                        </label>
+                        <div class="input-container">
+                            <input type="password" id="password" name="password" class="form-input" 
+                                   placeholder="Enter your password" required>
+                            <button type="button" class="password-toggle" onclick="togglePassword()">
+                                <span id="passwordToggleIcon">👁️</span>
+                            </button>
+                            <div class="input-focus-border"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-options">
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="remember" name="remember" class="form-checkbox">
+                            <label for="remember" class="checkbox-label">
+                                <span class="checkbox-custom"></span>
+                                Remember me
+                            </label>
+                        </div>
+                        <a href="#" class="forgot-link">Forgot password?</a>
+                    </div>
+
+                    <button type="submit" class="auth-btn">
+                        <span class="btn-text">Sign In</span>
+                        <span class="btn-icon">→</span>
+                        <div class="btn-ripple"></div>
+                    </button>
+
+                    <div class="auth-divider">
+                        <span class="divider-text">or continue with</span>
+                    </div>
+
+                    <div class="social-auth">
+                        <button type="button" class="social-btn google">
+                            <span class="social-icon">🔍</span>
+                            <span>Google</span>
+                        </button>
+                        <button type="button" class="social-btn github">
+                            <span class="social-icon">⚡</span>
+                            <span>GitHub</span>
+                        </button>
+                    </div>
+
+                    <div class="auth-footer">
+                        <p>Don't have an account? 
+                            <a href="{{ url_for('register') }}" class="auth-link">
+                                Create one now
+                                <span class="link-arrow">→</span>
+                            </a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme management
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            document.getElementById('themeIcon').textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+            updateLogo(savedTheme);
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            document.getElementById('themeIcon').textContent = newTheme === 'dark' ? '☀️' : '🌙';
+            updateLogo(newTheme);
+        }
+
+        function updateLogo(theme) {
+            const logo = document.getElementById('authLogo');
+            if (logo) {
+                const logoFile = theme === 'dark' ? 'light-logo.svg' : 'dark-logo.svg';
+                logo.src = `/static/images/${logoFile}`;
+            }
+        }
+
+        // Password toggle
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('passwordToggleIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.textContent = '👁️';
+            }
+        }
+
+        // Form animations
+        function initFormAnimations() {
+            const inputs = document.querySelectorAll('.form-input');
+            
+            inputs.forEach(input => {
+                input.addEventListener('focus', () => {
+                    input.parentElement.classList.add('focused');
+                });
+                
+                input.addEventListener('blur', () => {
+                    if (!input.value) {
+                        input.parentElement.classList.remove('focused');
+                    }
+                });
+                
+                if (input.value) {
+                    input.parentElement.classList.add('focused');
+                }
+            });
+        }
+
+        // Button ripple effect
+        function initButtonRipple() {
+            const authBtn = document.querySelector('.auth-btn');
+            
+            authBtn.addEventListener('click', function(e) {
+                const ripple = this.querySelector('.btn-ripple');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.classList.add('active');
+                
+                setTimeout(() => {
+                    ripple.classList.remove('active');
+                }, 600);
+            });
+        }
+
+        // Initialize everything
+        window.addEventListener('load', () => {
+            loadTheme();
+            initFormAnimations();
+            initButtonRipple();
+        });
+
+        // Form validation
+        document.querySelector('.auth-form').addEventListener('submit', function(e) {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (!username || !password) {
+                e.preventDefault();
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            // Add loading state
+            const submitBtn = document.querySelector('.auth-btn');
+            submitBtn.classList.add('loading');
+            submitBtn.querySelector('.btn-text').textContent = 'Signing in...';
+        });
+    </script>
+</body>
+</html>

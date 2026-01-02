@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warranty Claims - Dealership Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dealership.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- Main Container -->
+    <div class="dealership-container">
+        <!-- Header -->
+        <header class="dealership-header">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="logo-section">
+                        <img src="{{ url_for('static', filename='images/dark-logo.svg') }}" alt="Logo" class="header-logo">
+                        <div class="header-title">
+                            <h1>Warranty Claims</h1>
+                            <p>Technical Reports & Warranty Management</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="header-right">
+                    <div class="header-actions">
+                        <button class="header-btn" onclick="toggleTheme()">
+                            <span class="theme-icon">🌙</span>
+                        </button>
+                        <button class="header-btn" onclick="window.location.href='/dealership'">
+                            <span>🏢</span>
+                            <span>Dashboard</span>
+                        </button>
+                        <div class="user-menu">
+                            <button class="user-btn">
+                                <span class="user-avatar">{{ user.username[0].upper() if user else 'U' }}</span>
+                                <span class="user-name">{{ user.username if user else 'User' }}</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="dealership-nav">
+            <div class="nav-content">
+                <div class="nav-sections">
+                    <a href="/dealership" class="nav-item">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                    <a href="/dealership/warranty-claims" class="nav-item active">
+                        <span class="nav-icon">⚠️</span>
+                        <span class="nav-text">Warranty Claims</span>
+                    </a>
+                    <a href="/dealership/campaign-reports" class="nav-item">
+                        <span class="nav-icon">📋</span>
+                        <span class="nav-text">Campaign Reports</span>
+                    </a>
+                    <a href="/dealership/ffs-inspections" class="nav-item">
+                        <span class="nav-icon">🔍</span>
+                        <span class="nav-text">FFS Inspections</span>
+                    </a>
+                    <a href="/dealership/sfs-inspections" class="nav-item">
+                        <span class="nav-icon">🔎</span>
+                        <span class="nav-text">SFS Inspections</span>
+                    </a>
+                    <a href="/dealership/pdi-inspections" class="nav-item">
+                        <span class="nav-icon">📝</span>
+                        <span class="nav-text">PDI Inspections</span>
+                    </a>
+                    <a href="/dealership/repair-orders" class="nav-item">
+                        <span class="nav-icon">🔧</span>
+                        <span class="nav-text">Repair Orders</span>
+                    </a>
+                    <a href="/dealership/vin-history" class="nav-item">
+                        <span class="nav-icon">🚗</span>
+                        <span class="nav-text">VIN History</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="dealership-main">
+            <!-- Filters Section -->
+            <section class="filters-section">
+                <div class="section-header">
+                    <h2>Warranty Claims Analysis</h2>
+                    <p>VIN Number is unique - Technical Report (Warranty Claims Section)</p>
+                </div>
+                
+                <div class="filters-card">
+                    <div class="filters-grid">
+                        <div class="filter-group">
+                            <label for="vinFilter">VIN Number</label>
+                            <input type="text" id="vinFilter" placeholder="Enter VIN number" maxlength="17" value="{{ filters.vin or '' }}">
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="dealershipFilter">Dealership</label>
+                            <select id="dealershipFilter">
+                                <option value="">All Dealerships</option>
+                                <option value="Haval Central" {{ 'selected' if filters.dealership == 'Haval Central' else '' }}>Haval Central</option>
+                                <option value="Haval Lahore" {{ 'selected' if filters.dealership == 'Haval Lahore' else '' }}>Haval Lahore</option>
+                                <option value="Haval Karachi" {{ 'selected' if filters.dealership == 'Haval Karachi' else '' }}>Haval Karachi</option>
+                                <option value="Haval Islamabad" {{ 'selected' if filters.dealership == 'Haval Islamabad' else '' }}>Haval Islamabad</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="claimTypeFilter">Claim Type</label>
+                            <select id="claimTypeFilter">
+                                <option value="">All Types</option>
+                                <option value="tyre" {{ 'selected' if filters.claim_type == 'tyre' else '' }}>Tyre</option>
+                                <option value="engine" {{ 'selected' if filters.claim_type == 'engine' else '' }}>Engine</option>
+                                <option value="electrical" {{ 'selected' if filters.claim_type == 'electrical' else '' }}>Electrical</option>
+                                <option value="transmission" {{ 'selected' if filters.claim_type == 'transmission' else '' }}>Transmission</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="dateFrom">Date From</label>
+                            <input type="date" id="dateFrom" value="{{ filters.date_from or '' }}">
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="dateTo">Date To</label>
+                            <input type="date" id="dateTo" value="{{ filters.date_to or '' }}">
+                        </div>
+                        
+                        <div class="filter-actions">
+                            <button class="filter-btn primary" onclick="applyFilters()">
+                                <span>🔍</span>
+                                <span>Apply Filters</span>
+                            </button>
+                            <button class="filter-btn secondary" onclick="clearFilters()">
+                                <span>🗑️</span>
+                                <span>Clear</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Quick Insights -->
+            <section class="insights-section">
+                <div class="insights-grid">
+                    <div class="insight-card">
+                        <div class="insight-icon">🏆</div>
+                        <div class="insight-content">
+                            <div class="insight-title">Most Complained VIN</div>
+                            <div class="insight-value">LGWEF4A59LG123456</div>
+                            <div class="insight-subtitle">15 complaints this month</div>
+                        </div>
+                    </div>
+                    
+                    <div class="insight-card">
+                        <div class="insight-icon">🏢</div>
+                        <div class="insight-content">
+                            <div class="insight-title">Top Dealership (Claims)</div>
+                            <div class="insight-value">Haval Central</div>
+                            <div class="insight-subtitle">45% of total claims</div>
+                        </div>
+                    </div>
+                    
+                    <div class="insight-card">
+                        <div class="insight-icon">🚗</div>
+                        <div class="insight-content">
+                            <div class="insight-title">Most Affected Model</div>
+                            <div class="insight-value">H6 PHEV</div>
+                            <div class="insight-subtitle">32% of claims</div>
+                        </div>
+                    </div>
+                    
+                    <div class="insight-card">
+                        <div class="insight-icon">🛞</div>
+                        <div class="insight-content">
+                            <div class="insight-title">Tyre Claims (December)</div>
+                            <div class="insight-value">28 Claims</div>
+                            <div class="insight-subtitle">↑ 12% from last month</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Claims Table -->
+            <section class="table-section">
+                <div class="table-header">
+                    <div class="table-title">
+                        <h3>Warranty Claims Records</h3>
+                        <p>{{ claims|length if claims else 0 }} claims found</p>
+                    </div>
+                    <div class="table-actions">
+                        <button class="table-btn" onclick="exportData('warranty_claims')">
+                            <span>📤</span>
+                            <span>Export CSV</span>
+                        </button>
+                        <button class="table-btn primary" onclick="openNewClaimModal()">
+                            <span>➕</span>
+                            <span>New Claim</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>VIN Number</th>
+                                <th>Dealership</th>
+                                <th>Car Model</th>
+                                <th>Claim Type</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Cost</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if claims %}
+                                {% for claim in claims %}
+                                <tr>
+                                    <td>
+                                        <div class="vin-cell">
+                                            <span class="vin-number">{{ claim.vin_number or 'N/A' }}</span>
+                                        </div>
+                                    </td>
+                                    <td>{{ claim.dealership_name or 'N/A' }}</td>
+                                    <td>{{ claim.car_model or 'N/A' }}</td>
+                                    <td>
+                                        <span class="claim-type {{ claim.claim_type or 'unknown' }}">
+                                            {{ claim.claim_type or 'Unknown' }}
+                                        </span>
+                                    </td>
+                                    <td>{{ claim.claim_date or 'N/A' }}</td>
+                                    <td>
+                                        <span class="status {{ claim.status or 'pending' }}">
+                                            {{ claim.status or 'Pending' }}
+                                        </span>
+                                    </td>
+                                    <td>{{ "PKR {:,.0f}".format(claim.cost) if claim.cost else 'N/A' }}</td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="action-btn view" onclick="viewClaim({{ claim.id }})">👁️</button>
+                                            <button class="action-btn edit" onclick="editClaim({{ claim.id }})">✏️</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                            <tr>
+                                <td colspan="8" class="no-data">
+                                    <div class="no-data-content">
+                                        <div class="no-data-icon">📋</div>
+                                        <div class="no-data-text">No warranty claims found</div>
+                                        <div class="no-data-subtitle">Try adjusting your filters or add a new claim</div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Top Complained VINs -->
+            {% if top_vins %}
+            <section class="top-vins-section">
+                <div class="section-header">
+                    <h3>Most Complained VIN Numbers</h3>
+                    <p>VINs with highest complaint frequency</p>
+                </div>
+                
+                <div class="top-vins-grid">
+                    {% for vin in top_vins %}
+                    <div class="vin-card" onclick="window.location.href='/dealership/vin-history?vin={{ vin.vin_number }}'">
+                        <div class="vin-header">
+                            <div class="vin-number">{{ vin.vin_number }}</div>
+                            <div class="complaint-count">{{ vin.complaint_count }} complaints</div>
+                        </div>
+                        <div class="vin-details">
+                            <div class="vin-model">{{ vin.car_model }}</div>
+                            <div class="vin-dealership">{{ vin.dealership_name }}</div>
+                            <div class="vin-types">{{ vin.claim_types }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/dealership.js') }}"></script>
+    <script>
+        // Page-specific functions
+        function clearFilters() {
+            document.getElementById('vinFilter').value = '';
+            document.getElementById('dealershipFilter').value = '';
+            document.getElementById('claimTypeFilter').value = '';
+            document.getElementById('dateFrom').value = '';
+            document.getElementById('dateTo').value = '';
+            applyFilters();
+        }
+
+        function viewClaim(claimId) {
+            console.log('Viewing claim:', claimId);
+            // Implementation for viewing claim details
+        }
+
+        function editClaim(claimId) {
+            console.log('Editing claim:', claimId);
+            // Implementation for editing claim
+        }
+
+        function openNewClaimModal() {
+            console.log('Opening new claim modal');
+            // Implementation for new claim modal
+        }
+
+        // Theme toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            
+            const themeIcon = document.querySelector('.theme-icon');
+            themeIcon.textContent = newTheme === 'dark' ? '🌙' : '☀️';
+            
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // Load saved theme
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            
+            const themeIcon = document.querySelector('.theme-icon');
+            if (themeIcon) {
+                themeIcon.textContent = savedTheme === 'dark' ? '🌙' : '☀️';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>WhatsApp Conversation - Insights AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/whatsapp.css') }}">
+
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-background">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="modern-nav">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <img src="{{ url_for('static', filename='images/dark-logo.svg') }}" alt="Insights AI" class="brand-logo" id="navLogo">
+                <span class="brand-text">Insights AI</span>
+                <span class="brand-badge">WHATSAPP</span>
+            </div>
+            
+            <div class="nav-actions">
+                <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+                    <span id="themeIcon">☀️</span>
+                </button>
+                <a href="{{ url_for('chatbot_advanced') }}" class="nav-link">
+                    <span>🤖 AI Chat</span>
+                </a>
+                <a href="{{ url_for('analysis') }}" class="nav-link">
+                    <span>📈 Analytics</span>
+                </a>
+                <a href="{{ url_for('logout') }}" class="nav-cta">
+                    <span>Logout</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+    <div class="whatsapp-container">
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="breadcrumb">
+                    <a href="{{ url_for('chatbot_advanced') }}">Home</a> <span>›</span> 
+                    <a href="{{ url_for('view_whatsapp') }}">WhatsApp Messages</a> <span>›</span> 
+                    <span>{{ customer_name }}</span>
+                </div>
+                
+                <a href="{{ url_for('view_whatsapp') }}" class="back-button">
+                    ← Back to All Messages
+                </a>
+
+                <h1 class="page-title">{{ customer_name }}</h1>
+                <p class="page-subtitle">WhatsApp conversation history and message details</p>
+                
+                <!-- Date Filter Controls -->
+                <div class="date-filter-section">
+                    <div class="filter-group">
+                        <label for="dateFrom" >📅 From:</label>
+                        <input type="date" id="dateFrom" class="date-input" onchange="applyDateFilter()">
+                    </div>
+                    <div class="filter-group">
+                        <label for="dateTo" >📅 To:</label>
+                        <input type="date" id="dateTo" class="date-input" onchange="applyDateFilter()">
+                    </div>
+                    <div class="filter-group">
+                        <label for="messageType" >📋 Type:</label>
+                        <select id="messageType" class="date-input" onchange="applyFilters()">
+                            <option value="all">All Messages</option>
+                            <option value="complaint">Complaints Only</option>
+                            <option value="query">Queries Only</option>
+                        </select>
+                    </div>
+                    <div class="filter-actions">
+                        <button class="filter-btn" onclick="clearAllFilters()" >🗑️ Clear</button>
+                        <button class="filter-btn primary" onclick="applyFilters()" >✨ Apply Filter</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            {% if messages %}
+            {% set complaints = messages|selectattr('message_type', 'equalto', 'complaint')|list %}
+            {% set queries = messages|selectattr('message_type', 'equalto', 'query')|list %}
+            <div class="stats-grid">
+                <div class="stat-card whatsapp-processing">
+                    <div class="whatsapp-bg"></div>
+                    <div class="stat-header">
+                        <span class="stat-icon">💬</span>
+                    </div>
+                    <div class="stat-value">{{ total_messages }}</div>
+                    <div class="stat-label">Total Messages</div>
+                </div>
+
+                <div class="stat-card whatsapp-processing">
+                    <div class="whatsapp-bg"></div>
+                    <div class="stat-header">
+                        <span class="stat-icon">❗</span>
+                    </div>
+                    <div class="stat-value complaint">{{ complaints|length }}</div>
+                    <div class="stat-label">Complaints</div>
+                </div>
+
+                <div class="stat-card whatsapp-processing">
+                    <div class="whatsapp-bg"></div>
+                    <div class="stat-header">
+                        <span class="stat-icon">❓</span>
+                    </div>
+                    <div class="stat-value query">{{ queries|length }}</div>
+                    <div class="stat-label">Queries</div>
+                </div>
+
+                <div class="stat-card whatsapp-processing">
+                    <div class="whatsapp-bg"></div>
+                    <div class="stat-header">
+                        <span class="stat-icon">📞</span>
+                    </div>
+                    <div class="stat-value">{{ messages[0].phone_number if messages else 'N/A' }}</div>
+                    <div class="stat-label">Phone Number</div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Conversation Thread -->
+            {% if messages %}
+            <div class="conversation-thread">
+                {% for message in messages %}
+                <div class="conversation-message {{ message.message_type }}" data-date="{{ message.timestamp[:10] if message.timestamp else '' }}" data-type="{{ message.message_type }}">
+                    <div class="message-bubble">
+                        <div class="message-header-inline">
+                            <span class="message-type-icon">
+                                {% if message.message_type == 'complaint' %}❗{% else %}❓{% endif %}
+                            </span>
+                            <span class="message-type-label {{ message.message_type }}">
+                                {% if message.message_type == 'complaint' %}Complaint{% else %}Query{% endif %}
+                            </span>
+                            <span class="message-time">{{ message.timestamp[:19] if message.timestamp else 'N/A' }}</span>
+                        </div>
+                        <div class="message-text">{{ message.message }}</div>
+                        <div class="message-meta">
+                            <span>📞 {{ message.phone_number }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">📭</div>
+                <h3 class="empty-title">No Messages Found</h3>
+                <p class="empty-text">No WhatsApp messages for this conversation</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/whatsapp.js') }}"></script>
+</body>
+</html>

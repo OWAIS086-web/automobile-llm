@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insights AI - Next-Generation AI Intelligence Platform</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-background">
+        <div class="gradient-orb orb-1"></div>
+        <div class="gradient-orb orb-2"></div>
+        <div class="gradient-orb orb-3"></div>
+        <div class="floating-grid"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="modern-nav">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <img src="{{ url_for('static', filename='images/dark-logo.svg') }}" alt="Insights AI" class="brand-logo" id="navLogo">
+                <span class="brand-text">Insights AI</span>
+                <span class="brand-badge">BETA</span>
+            </div>
+            
+            <div class="nav-menu">
+                <a href="#features" class="nav-item">
+                    <span class="nav-icon">⚡</span>
+                    <span>Features</span>
+                </a>
+                <a href="#demo" class="nav-item">
+                    <span class="nav-icon">🎬</span>
+                    <span>Demo</span>
+                </a>
+                <a href="#about" class="nav-item">
+                    <span class="nav-icon">🚀</span>
+                    <span>About</span>
+                </a>
+            </div>
+            
+            <div class="nav-actions">
+                <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+                    <span id="themeIcon">☀️</span>
+                </button>
+                   <a href="{{ url_for('login') }}" class="cta-primary-large">
+                        <span class="cta-text">login Now</span>
+                        <span class="cta-icon">🎉</span>
+                        <div class="cta-ripple"></div>
+                    </a>
+                  <a href="{{ url_for('register') }}" class="cta-primary-large">
+                        <span class="cta-text">Start Now</span>
+                        <span class="cta-icon">🚀</span>
+                        <div class="cta-ripple"></div>
+                    </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="next-hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-announcement">
+                    <div class="announcement-badge">
+                        <span class="badge-pulse"></span>
+                        <span class="badge-text">🎉 Now with Grok-Powered Custom Engine</span>
+                        <span class="badge-arrow">→</span>
+                    </div>
+                </div>
+                
+                <h1 class="hero-title">
+                    <span class="title-line">The Future of</span>
+                    <span class="title-gradient">AI-Powered Intelligence</span>
+                    <span class="title-line">is Here</span>
+                </h1>
+                
+                <p class="hero-subtitle">
+                    Transform your business with cutting-edge artificial intelligence that understands, 
+                    analyzes, and predicts customer behavior with unprecedented accuracy.
+                </p>
+                
+                <div class="hero-stats-mini">
+                    <div class="stat-mini">
+                        <span class="stat-number">99.9%</span>
+                        <span class="stat-label">Accuracy</span>
+                    </div>
+                    <div class="stat-mini">
+                        <span class="stat-number">10K+</span>
+                        <span class="stat-label">Businesses</span>
+                    </div>
+                    <div class="stat-mini">
+                        <span class="stat-number">24/7</span>
+                        <span class="stat-label">Processing</span>
+                    </div>
+                </div>
+                
+                <div class="hero-actions">
+                    <a href="{{ url_for('register') }}" class="cta-primary-next">
+                        <span class="cta-text">Start Now</span>
+                        <span class="cta-icon">🚀</span>
+                        <div class="cta-ripple"></div>
+                    </a>
+                    <a href="#demo" class="cta-secondary-next">
+                        <span class="play-icon">▶</span>
+                        <span class="cta-text">Watch Demo</span>
+                        <span class="demo-duration">2:30</span>
+                    </a>
+                </div>
+                
+                <div class="hero-social-proof">
+                    <span class="proof-text">Trusted by industry leaders</span>
+                    <div class="company-logos">
+                        <div class="logo-placeholder">TechCorp</div>
+                        <div class="logo-placeholder">InnovateCo</div>
+                        <div class="logo-placeholder">FutureAI</div>
+                        <div class="logo-placeholder">DataFlow</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="hero-visual">
+                <div class="dashboard-3d">
+                    <div class="dashboard-frame">
+                        <div class="frame-header">
+                            <div class="frame-controls">
+                                <span class="control red"></span>
+                                <span class="control yellow"></span>
+                                <span class="control green"></span>
+                            </div>
+                            <div class="frame-title">Insights AI Dashboard</div>
+                            <div class="frame-status">
+                                <span class="status-indicator"></span>
+                                <span class="status-text">Live Analytics</span>
+                            </div>
+                        </div>
+                        
+                        <div class="dashboard-content">
+                            <div class="analytics-panel">
+                                <div class="panel-header">
+                                    <h3>Real-time Insights</h3>
+                                    <div class="panel-actions">
+                                        <button class="action-btn">📊</button>
+                                        <button class="action-btn">⚙️</button>
+                                    </div>
+                                </div>
+                                
+                                <div class="metrics-grid">
+                                    <div class="metric-card">
+                                        <div class="metric-icon">💬</div>
+                                        <div class="metric-value">1,247</div>
+                                        <div class="metric-label">Messages</div>
+                                        <div class="metric-trend positive">+12%</div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-icon">😊</div>
+                                        <div class="metric-value">89%</div>
+                                        <div class="metric-label">Positive</div>
+                                        <div class="metric-trend positive">+5%</div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-icon">🎯</div>
+                                        <div class="metric-value">156</div>
+                                        <div class="metric-label">Insights</div>
+                                        <div class="metric-trend positive">+23%</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="chart-container">
+                                    <div class="chart-header">
+                                        <span>Sentiment Analysis</span>
+                                        <span class="chart-period">Last 7 days</span>
+                                    </div>
+                                    <div class="animated-chart">
+                                        <div class="chart-bar" style="height: 70%"></div>
+                                        <div class="chart-bar" style="height: 85%"></div>
+                                        <div class="chart-bar" style="height: 60%"></div>
+                                        <div class="chart-bar" style="height: 90%"></div>
+                                        <div class="chart-bar" style="height: 75%"></div>
+                                        <div class="chart-bar" style="height: 95%"></div>
+                                        <div class="chart-bar" style="height: 80%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="ai-chat-panel">
+                                <div class="chat-header">
+                                    <div class="ai-avatar">🤖</div>
+                                    <div class="ai-info">
+                                        <span class="ai-name">AI Assistant</span>
+                                        <span class="ai-status">Online</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="chat-messages">
+                                    <div class="message user-message">
+                                        <div class="message-content">Analyze customer feedback trends</div>
+                                        <div class="message-time">2:34 PM</div>
+                                    </div>
+                                    <div class="message ai-message">
+                                        <div class="message-content">
+                                            <div class="typing-animation">
+                                                <span></span>
+                                                <span></span>
+                                                <span></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Floating Elements -->
+                    <div class="floating-elements">
+                        <div class="float-card card-1">
+                            <div class="card-icon">📈</div>
+                            <div class="card-text">+127% Growth</div>
+                        </div>
+                        <div class="float-card card-2">
+                            <div class="card-icon">⚡</div>
+                            <div class="card-text">Real-time</div>
+                        </div>
+                        <div class="float-card card-3">
+                            <div class="card-icon">🎯</div>
+                            <div class="card-text">99.9% Accurate</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="next-features" id="features">
+        <div class="features-container">
+            <div class="section-header">
+                <div class="section-badge">
+                    <span class="badge-pulse"></span>
+                    <span>Capabilities</span>
+                </div>
+                <h2 class="section-title">Powered by Next-Gen AI</h2>
+                <p class="section-subtitle">
+                    Experience the future of business intelligence with our cutting-edge AI platform
+                </p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card-next">
+                    <div class="feature-icon-container">
+                        <div class="feature-icon">🧠</div>
+                        <div class="icon-glow"></div>
+                    </div>
+                    <h3 class="feature-title">Advanced AI Engine</h3>
+                    <p class="feature-description">
+                        Powered by Grok and custom neural networks for unparalleled understanding and analysis.
+                    </p>
+                    <div class="feature-metrics">
+                        <div class="metric">
+                            <span class="metric-value">99.9%</span>
+                            <span class="metric-label">Accuracy</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-value">< 100ms</span>
+                            <span class="metric-label">Response</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="feature-card-next">
+                    <div class="feature-icon-container">
+                        <div class="feature-icon">⚡</div>
+                        <div class="icon-glow"></div>
+                    </div>
+                    <h3 class="feature-title">Real-time Processing</h3>
+                    <p class="feature-description">
+                        Process millions of data points instantly with our distributed AI infrastructure.
+                    </p>
+                    <div class="feature-metrics">
+                        <div class="metric">
+                            <span class="metric-value">1M+</span>
+                            <span class="metric-label">Messages/sec</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-value">24/7</span>
+                            <span class="metric-label">Uptime</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="feature-card-next">
+                    <div class="feature-icon-container">
+                        <div class="feature-icon">🎯</div>
+                        <div class="icon-glow"></div>
+                    </div>
+                    <h3 class="feature-title">Predictive Analytics</h3>
+                    <p class="feature-description">
+                        Forecast trends and customer behavior with machine learning algorithms.
+                    </p>
+                    <div class="feature-metrics">
+                        <div class="metric">
+                            <span class="metric-value">95%</span>
+                            <span class="metric-label">Prediction Rate</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-value">30 days</span>
+                            <span class="metric-label">Forecast</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="feature-card-next">
+                    <div class="feature-icon-container">
+                        <div class="feature-icon">🔒</div>
+                        <div class="icon-glow"></div>
+                    </div>
+                    <h3 class="feature-title">Enterprise Security</h3>
+                    <p class="feature-description">
+                        Bank-level encryption and compliance with global security standards.
+                    </p>
+                    <div class="feature-metrics">
+                        <div class="metric">
+                            <span class="metric-value">SOC 2</span>
+                            <span class="metric-label">Certified</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-value">GDPR</span>
+                            <span class="metric-label">Compliant</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="feature-card-next">
+                    <div class="feature-icon-container">
+                        <div class="feature-icon">🔗</div>
+                        <div class="icon-glow"></div>
+                    </div>
+                    <h3 class="feature-title">Seamless Integration</h3>
+                    <p class="feature-description">
+                        Connect with 500+ tools and platforms through our comprehensive API ecosystem.
+                    </p>
+                    <div class="feature-metrics">
+                        <div class="metric">
+                            <span class="metric-value">500+</span>
+                            <span class="metric-label">Integrations</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-value">REST</span>
+                            <span class="metric-label">API</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="feature-card-next">
+                    <div class="feature-icon-container">
+                        <div class="feature-icon">📊</div>
+                        <div class="icon-glow"></div>
+                    </div>
+                    <h3 class="feature-title">Smart Dashboards</h3>
+                    <p class="feature-description">
+                        Beautiful, interactive dashboards that adapt to your business needs automatically.
+                    </p>
+                    <div class="feature-metrics">
+                        <div class="metric">
+                            <span class="metric-value">Custom</span>
+                            <span class="metric-label">Widgets</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-value">Live</span>
+                            <span class="metric-label">Updates</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="stats-container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">🚀</div>
+                    <div class="stat-number" data-target="10000">0</div>
+                    <div class="stat-label">Active Users</div>
+                    <div class="stat-description">Growing daily</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⚡</div>
+                    <div class="stat-number" data-target="99.9">0</div>
+                    <div class="stat-label">Uptime %</div>
+                    <div class="stat-description">Reliable service</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-number" data-target="1000000">0</div>
+                    <div class="stat-label">Messages Processed</div>
+                    <div class="stat-description">Every month</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-number" data-target="95">0</div>
+                    <div class="stat-label">Accuracy Rate</div>
+                    <div class="stat-description">AI precision</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section class="next-demo" id="demo">
+        <div class="demo-container">
+            <div class="demo-content">
+                <div class="section-badge">
+                    <span class="badge-pulse"></span>
+                    <span>Experience</span>
+                </div>
+                <h2 class="demo-title">See the Magic in Action</h2>
+                <p class="demo-subtitle">
+                    Watch how Insights AI transforms raw data into actionable intelligence in real-time
+                </p>
+                
+                <div class="demo-video-container">
+                    <div class="video-wrapper">
+                        <div class="video-placeholder">
+                            <div class="play-button-large">
+                                <div class="play-icon">▶</div>
+                                <div class="play-ripple"></div>
+                            </div>
+                            <div class="video-overlay">
+                                <div class="video-info">
+                                    <div class="video-title">Product Demo</div>
+                                    <div class="video-stats">
+                                        <span>2:30 min</span>
+                                        <span>•</span>
+                                        <span>4K Quality</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="demo-steps">
+                    <div class="step-item">
+                        <div class="step-number">01</div>
+                        <div class="step-content">
+                            <h4>Connect Your Data</h4>
+                            <p>Import from any source with one-click integrations</p>
+                        </div>
+                        <div class="step-arrow">→</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">02</div>
+                        <div class="step-content">
+                            <h4>AI Analysis</h4>
+                            <p>Our AI processes and understands your data instantly</p>
+                        </div>
+                        <div class="step-arrow">→</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-number">03</div>
+                        <div class="step-content">
+                            <h4>Get Insights</h4>
+                            <p>Receive actionable recommendations and predictions</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials-section">
+        <div class="testimonials-container">
+            <div class="section-header">
+                <div class="section-badge">
+                    <span class="badge-pulse"></span>
+                    <span>Testimonials</span>
+                </div>
+                <h2 class="section-title">Loved by Industry Leaders</h2>
+                <p class="section-subtitle">
+                    See what our customers say about transforming their business with AI
+                </p>
+            </div>
+            
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <div class="quote-icon">"</div>
+                        <p class="testimonial-text">
+                            "Insights AI has revolutionized how we understand our customers. The accuracy and speed of analysis is incredible."
+                        </p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=60&h=60&fit=crop&crop=face" alt="haval">
+                        </div>
+                        <div class="author-info">
+                            <div class="author-name">name</div>
+                            <div class="author-title">manager, Haval</div>
+                        </div>
+                    </div>
+                    <div class="testimonial-rating">
+                        <span>⭐⭐⭐⭐⭐</span>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <div class="quote-icon">"</div>
+                        <p class="testimonial-text">
+                            "The real-time insights have helped us increase customer satisfaction by 40%. Game-changing technology!"
+                        </p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=60&h=60&fit=crop&crop=face" alt="Sarah Johnson">
+                        </div>
+                        <div class="author-info">
+                            <div class="author-name">name </div>
+                            <div class="author-title">company</div>
+                        </div>
+                    </div>
+                    <div class="testimonial-rating">
+                        <span>⭐⭐⭐⭐⭐</span>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <div class="quote-icon">"</div>
+                        <p class="testimonial-text">
+                            "Implementation was seamless and the ROI was visible within the first month. Highly recommended!"
+                        </p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&h=60&fit=crop&crop=face" alt="Mike Chen">
+                        </div>
+                        <div class="author-info">
+                            <div class="author-name">name</div>
+                            <div class="author-title">company</div>
+                        </div>
+                    </div>
+                    <div class="testimonial-rating">
+                        <span>⭐⭐⭐⭐⭐</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Integration Section -->
+    <section class="integration-section">
+        <div class="integration-container">
+            <div class="section-header">
+                <div class="section-badge">
+                    <span class="badge-pulse"></span>
+                    <span>Integrations</span>
+                </div>
+                <h2 class="section-title">Connect Everything</h2>
+                <p class="section-subtitle">
+                    Seamlessly integrate with your existing tools and workflows
+                </p>
+            </div>
+            
+            <div class="integration-showcase">
+                <div class="integration-center">
+                    <div class="center-logo">
+                        <img src="{{ url_for('static', filename='images/dark-logo.svg') }}" alt="Insights AI" id="integrationLogo">
+                        <div class="center-pulse"></div>
+                    </div>
+                </div>
+                
+                <div class="integration-orbit">
+                    <div class="integration-item" style="--angle: 0deg;">
+                        <div class="integration-icon">📧</div>
+                        <span>Email</span>
+                    </div>
+                    <div class="integration-item" style="--angle: 45deg;">
+                        <div class="integration-icon">💬</div>
+                        <span>Slack</span>
+                    </div>
+                    <div class="integration-item" style="--angle: 90deg;">
+                        <div class="integration-icon">📊</div>
+                        <span>Analytics</span>
+                    </div>
+                    <div class="integration-item" style="--angle: 135deg;">
+                        <div class="integration-icon">🗄️</div>
+                        <span>Database</span>
+                    </div>
+                    <div class="integration-item" style="--angle: 180deg;">
+                        <div class="integration-icon">☁️</div>
+                        <span>Cloud</span>
+                    </div>
+                    <div class="integration-item" style="--angle: 225deg;">
+                        <div class="integration-icon">🔗</div>
+                        <span>API</span>
+                    </div>
+                    <div class="integration-item" style="--angle: 270deg;">
+                        <div class="integration-icon">📱</div>
+                        <span>Mobile</span>
+                    </div>
+                    <div class="integration-item" style="--angle: 315deg;">
+                        <div class="integration-icon">🌐</div>
+                        <span>Web</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="integration-stats">
+                <div class="integration-stat">
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">Integrations</div>
+                </div>
+                <div class="integration-stat">
+                    <div class="stat-number">99.9%</div>
+                    <div class="stat-label">Uptime</div>
+                </div>
+                <div class="integration-stat">
+                    <div class="stat-number">< 5min</div>
+                    <div class="stat-label">Setup Time</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="next-cta">
+        <div class="cta-container">
+            <div class="cta-content">
+                <div class="section-badge">
+                    <span class="badge-pulse"></span>
+                   <span class="text-white">Get Started</span>
+
+                </div>
+                <h2 class="cta-title">Ready to Transform Your Business?</h2>
+                <p class="cta-subtitle">
+                    Join thousands of forward-thinking companies using AI to drive unprecedented growth
+                </p>
+                
+                <div class="cta-actions">
+                    <a href="{{ url_for('register') }}" class="cta-primary-large">
+                        <span class="cta-text">Start Now</span>
+                        <span class="cta-icon">🚀</span>
+                        <div class="cta-ripple"></div>
+                    </a>
+                    <a href="{{ url_for('login') }}" class="cta-secondary-large">
+                        <span class="cta-text">Sign In</span>
+                    </a>
+                </div>
+                
+                <div class="cta-features">
+                    <div class="cta-feature">
+                        <span class="feature-icon">✓</span>
+                        <span class="feature-text">Instant access</span>
+                    </div>
+                    <div class="cta-feature">
+                        <span class="feature-icon">✓</span>
+                        <span class="feature-text">No setup required</span>
+                    </div>
+                    <div class="cta-feature">
+                        <span class="feature-icon">✓</span>
+                        <span class="feature-text">Start analyzing immediately</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="next-footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <img src="{{ url_for('static', filename='images/dark-logo.svg') }}" alt="Insights AI" class="footer-logo" id="footerLogo">
+                    <div class="brand-info">
+                        <span class="brand-text">Insights AI</span>
+                        <span class="brand-tagline">Next-Generation Intelligence</span>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <div class="link-group">
+                        <h4>Support</h4>
+                        <a href="/help">Help Page</a>
+                  
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <div class="footer-legal">
+                    <span>&copy; 2025 Insights AI. All rights reserved.</span>
+                    <div class="footer-social">
+                        <a href="#" class="social-link">Twitter</a>
+                        <a href="#" class="social-link">LinkedIn</a>
+                        <a href="#" class="social-link">GitHub</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Theme management
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            document.getElementById('themeIcon').textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+            updateLogos(savedTheme);
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            document.getElementById('themeIcon').textContent = newTheme === 'dark' ? '☀️' : '🌙';
+            updateLogos(newTheme);
+        }
+
+        function updateLogos(theme) {
+            const logos = ['navLogo', 'footerLogo', 'integrationLogo'];
+            logos.forEach(logoId => {
+                const logo = document.getElementById(logoId);
+                if (logo) {
+                    const logoFile = theme === 'dark' ? 'light-logo.svg' : 'dark-logo.svg';
+                    logo.src = `/static/images/${logoFile}`;
+                }
+            });
+        }
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Typing animation for AI chat
+        function startTypingAnimation() {
+            const typingAnimation = document.querySelector('.typing-animation');
+            if (typingAnimation) {
+                setTimeout(() => {
+                    typingAnimation.innerHTML = 'Based on 1,247 messages analyzed, I found 3 key insights: 70% positive sentiment (+12% from last week), delivery concerns decreased by 15%, and customers love the new AI features. Would you like me to dive deeper into any specific area?';
+                    typingAnimation.parentElement.classList.add('completed');
+                }, 3000);
+            }
+        }
+
+        // Initialize animations and interactions
+        window.addEventListener('load', () => {
+            loadTheme();
+            startTypingAnimation();
+            
+            // Animate chart bars
+            const chartBars = document.querySelectorAll('.chart-bar');
+            chartBars.forEach((bar, index) => {
+                setTimeout(() => {
+                    bar.style.transform = 'scaleY(1)';
+                }, index * 200);
+            });
+            
+            // Animate metric cards
+            const metricCards = document.querySelectorAll('.metric-card');
+            metricCards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.transform = 'translateY(0)';
+                    card.style.opacity = '1';
+                }, index * 150);
+            });
+        });
+
+        // Counter animation function
+        function animateCounter(element, target, duration = 2000) {
+            const start = 0;
+            const increment = target / (duration / 16);
+            let current = start;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                
+                // Format numbers
+                let displayValue = Math.floor(current);
+                if (target >= 1000000) {
+                    displayValue = (displayValue / 1000000).toFixed(1) + 'M';
+                } else if (target >= 1000) {
+                    displayValue = (displayValue / 1000).toFixed(1) + 'K';
+                } else if (target < 100 && target % 1 !== 0) {
+                    displayValue = current.toFixed(1);
+                }
+                
+                element.textContent = displayValue;
+            }, 16);
+        }
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-in');
+                    
+                    // Animate counters
+                    if (entry.target.classList.contains('stat-card')) {
+                        const counter = entry.target.querySelector('.stat-number');
+                        const target = parseInt(counter.getAttribute('data-target'));
+                        animateCounter(counter, target);
+                    }
+                }
+            });
+        }, observerOptions);
+
+        // Video play functionality
+        function initVideoPlayer() {
+            const videoPlaceholder = document.querySelector('.video-placeholder');
+            const playButton = document.querySelector('.play-button-large');
+            
+            if (videoPlaceholder && playButton) {
+                playButton.addEventListener('click', () => {
+                    // Add ripple effect
+                    const ripple = document.createElement('div');
+                    ripple.className = 'click-ripple';
+                    playButton.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                    
+                    // Here you would typically open a modal or redirect to video
+                    console.log('Video play clicked');
+                });
+            }
+        }
+
+        // Testimonial carousel (if needed)
+        function initTestimonialCarousel() {
+            const testimonials = document.querySelectorAll('.testimonial-card');
+            let currentIndex = 0;
+            
+            // Auto-rotate testimonials highlight
+            setInterval(() => {
+                testimonials.forEach((card, index) => {
+                    card.classList.remove('highlighted');
+                });
+                
+                testimonials[currentIndex].classList.add('highlighted');
+                currentIndex = (currentIndex + 1) % testimonials.length;
+            }, 5000);
+        }
+
+        // Integration orbit interaction
+        function initIntegrationOrbit() {
+            const orbitItems = document.querySelectorAll('.integration-item');
+            const centerLogo = document.querySelector('.center-logo');
+            
+            orbitItems.forEach(item => {
+                item.addEventListener('mouseenter', () => {
+                    centerLogo.style.transform = 'translate(-50%, -50%) scale(1.1)';
+                    centerLogo.style.boxShadow = 'var(--shadow-glow)';
+                });
+                
+                item.addEventListener('mouseleave', () => {
+                    centerLogo.style.transform = 'translate(-50%, -50%) scale(1)';
+                    centerLogo.style.boxShadow = 'none';
+                });
+            });
+        }
+
+        // Observe elements for animation
+        document.addEventListener('DOMContentLoaded', () => {
+            const animateElements = document.querySelectorAll('.feature-card-next, .step-item, .float-card, .stat-card, .testimonial-card');
+            animateElements.forEach(el => observer.observe(el));
+            
+            // Initialize interactive features
+            initVideoPlayer();
+            initTestimonialCarousel();
+            initIntegrationOrbit();
+            
+            // Add scroll-based parallax for floating elements
+            window.addEventListener('scroll', () => {
+                const scrolled = window.pageYOffset;
+                const parallaxElements = document.querySelectorAll('.float-card');
+                
+                parallaxElements.forEach((element, index) => {
+                    const speed = 0.5 + (index * 0.1);
+                    const yPos = -(scrolled * speed);
+                    element.style.transform = `translateY(${yPos}px)`;
+                });
+            });
+        });
+    </script>
+</body>
+</html>

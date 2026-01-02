@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDI Inspections - Dealership Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dealership.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- Main Container -->
+    <div class="dealership-container">
+        <!-- Header -->
+        <header class="dealership-header">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="logo-section">
+                        <img src="{{ url_for('static', filename='images/dark-logo.svg') }}" alt="Logo" class="header-logo">
+                        <div class="header-title">
+                            <h1>PDI Inspections</h1>
+                            <p>Pre-Delivery Inspection Reports</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="header-right">
+                    <div class="header-actions">
+                        <button class="header-btn" onclick="toggleTheme()">
+                            <span class="theme-icon">🌙</span>
+                        </button>
+                        <button class="header-btn" onclick="window.location.href='/chatbot_advanced'">
+                            <span>💬</span>
+                            <span>Chat AI</span>
+                        </button>
+                        <div class="user-menu">
+                            <button class="user-btn">
+                                <span class="user-avatar">{{ user.username[0].upper() if user else 'U' }}</span>
+                                <span class="user-name">{{ user.username if user else 'User' }}</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="dealership-nav">
+            <div class="nav-content">
+                <div class="nav-sections">
+                    <a href="/dealership" class="nav-item">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                    <a href="/dealership/warranty-claims" class="nav-item">
+                        <span class="nav-icon">⚠️</span>
+                        <span class="nav-text">Warranty Claims</span>
+                    </a>
+                    <a href="/dealership/campaign-reports" class="nav-item">
+                        <span class="nav-icon">📋</span>
+                        <span class="nav-text">Campaign Reports</span>
+                    </a>
+                    <a href="/dealership/ffs-inspections" class="nav-item">
+                        <span class="nav-icon">🔍</span>
+                        <span class="nav-text">FFS Inspections</span>
+                    </a>
+                    <a href="/dealership/sfs-inspections" class="nav-item">
+                        <span class="nav-icon">🔎</span>
+                        <span class="nav-text">SFS Inspections</span>
+                    </a>
+                    <a href="/dealership/pdi-inspections" class="nav-item active">
+                        <span class="nav-icon">📝</span>
+                        <span class="nav-text">PDI Inspections</span>
+                    </a>
+                    <a href="/dealership/repair-orders" class="nav-item">
+                        <span class="nav-icon">🔧</span>
+                        <span class="nav-text">Repair Orders</span>
+                    </a>
+                    <a href="/dealership/vin-history" class="nav-item">
+                        <span class="nav-icon">🚗</span>
+                        <span class="nav-text">VIN History</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="dealership-main">
+            <!-- Filters Section -->
+            <section class="filters-section">
+                <div class="section-header">
+                    <h2>PDI Inspection Filters</h2>
+                    <p>Filter pre-delivery inspections by dealership, status, and date range</p>
+                </div>
+                
+                <div class="filters-grid">
+                    <div class="filter-group">
+                        <label for="dealershipFilter">Dealership</label>
+                        <select id="dealershipFilter" onchange="applyFilters()">
+                            <option value="">All Dealerships</option>
+                            <option value="Haval Central">Haval Central</option>
+                            <option value="Haval Lahore">Haval Lahore</option>
+                            <option value="Haval Karachi">Haval Karachi</option>
+                            <option value="Haval Islamabad">Haval Islamabad</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="statusFilter">PDI Status</label>
+                        <select id="statusFilter" onchange="applyFilters()">
+                            <option value="">All Status</option>
+                            <option value="passed">Passed</option>
+                            <option value="failed">Failed</option>
+                            <option value="objection">With Objections</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="deliveryStatusFilter">Delivery Status</label>
+                        <select id="deliveryStatusFilter" onchange="applyFilters()">
+                            <option value="">All Delivery Status</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="pending">Pending</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="dateFrom">Date From</label>
+                        <input type="date" id="dateFrom" value="{{ filters.date_from or '' }}" onchange="applyFilters()">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="dateTo">Date To</label>
+                        <input type="date" id="dateTo" value="{{ filters.date_to or '' }}" onchange="applyFilters()">
+                    </div>
+                    
+                    <div class="filter-actions">
+                        <button class="filter-btn clear" onclick="clearFilters()">
+                            <span>🗑️</span>
+                            <span>Clear</span>
+                        </button>
+                        <button class="filter-btn export" onclick="exportData('pdi_inspections')">
+                            <span>📤</span>
+                            <span>Export</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PDI Statistics -->
+            <section class="stats-section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📝</div>
+                        <div class="stat-content">
+                            <div class="stat-number">{{ pdi_stats.total_pdis or 0 }}</div>
+                            <div class="stat-label">Total PDI Reports</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">⚠️</div>
+                        <div class="stat-content">
+                            <div class="stat-number">{{ pdi_stats.objection_pdis or 0 }}</div>
+                            <div class="stat-label">With Objections</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-content">
+                            <div class="stat-number">{{ pdi_stats.objection_percentage or 0 }}%</div>
+                            <div class="stat-label">Objection Rate</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">🚚</div>
+                        <div class="stat-content">
+                            <div class="stat-number">0</div>
+                            <div class="stat-label">Pending Delivery</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PDI Data Table -->
+            <section class="data-section">
+                <div class="section-header">
+                    <h2>PDI Inspection Records</h2>
+                    <p>Detailed pre-delivery inspection reports</p>
+                </div>
+                
+                <div class="data-table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>VIN Number</th>
+                                <th>Dealership</th>
+                                <th>Car Model</th>
+                                <th>Inspection Date</th>
+                                <th>PDI Status</th>
+                                <th>Objections</th>
+                                <th>Delivery Status</th>
+                                <th>Inspector</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if pdi_stats.dealership_stats %}
+                                {% for stat in pdi_stats.dealership_stats %}
+                                <tr>
+                                    <td>
+                                        <div class="cell-content">
+                                            <strong class="vin-number">Sample VIN</strong>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cell-content">
+                                            <span class="dealership-badge">{{ stat.dealership_name }}</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cell-content">
+                                            Haval H6
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cell-content">
+                                            2024-12-28
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cell-content">
+                                            {% if stat.objection_count > 0 %}
+                                            <span class="status-badge objection">With Objections</span>
+                                            {% else %}
+                                            <span class="status-badge passed">Passed</span>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cell-content">
+                                            <span class="objection-count">{{ stat.objection_count }}</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cell-content">
+                                            <span class="status-badge delivered">Delivered</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cell-content">
+                                            Inspector Name
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cell-actions">
+                                            <button class="action-btn view" onclick="viewPDIDetails('SAMPLE_VIN')">
+                                                <span>👁️</span>
+                                            </button>
+                                            <button class="action-btn edit" onclick="editPDI('1')">
+                                                <span>✏️</span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                            <tr>
+                                <td colspan="9" class="no-data">
+                                    <div class="no-data-content">
+                                        <span class="no-data-icon">📝</span>
+                                        <h3>No PDI Inspection Data</h3>
+                                        <p>No pre-delivery inspections found matching your criteria.</p>
+                                        <button class="add-btn" onclick="addNewPDI()">
+                                            <span>➕</span>
+                                            <span>Add New PDI</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- PDI Analytics -->
+            <section class="analytics-section">
+                <div class="section-header">
+                    <h2>PDI Analytics</h2>
+                    <p>Visual insights into pre-delivery inspection performance</p>
+                </div>
+                
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>PDI Reports by Dealership</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="dealershipPDIChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>PDI Status Distribution</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="pdiStatusChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Monthly PDI Trend</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="monthlyPDIChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Objection Rate Analysis</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="objectionRateChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Key Insights -->
+            <section class="insights-section">
+                <div class="section-header">
+                    <h2>Key Insights</h2>
+                    <p>Important findings from PDI data analysis</p>
+                </div>
+                
+                <div class="insights-grid">
+                    <div class="insight-card">
+                        <div class="insight-icon">🎯</div>
+                        <div class="insight-content">
+                            <h3>Quality Control</h3>
+                            <p>{{ pdi_stats.objection_percentage or 0 }}% of vehicles have objections during PDI, indicating areas for factory quality improvement.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="insight-card">
+                        <div class="insight-icon">🏆</div>
+                        <div class="insight-content">
+                            <h3>Top Performing Dealership</h3>
+                            <p>{% if pdi_stats.dealership_stats %}{{ pdi_stats.dealership_stats[0].dealership_name }}{% else %}N/A{% endif %} leads with the highest number of PDI reports submitted.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="insight-card">
+                        <div class="insight-icon">📈</div>
+                        <div class="insight-content">
+                            <h3>Delivery Efficiency</h3>
+                            <p>Track the gap between factory delivery and customer delivery to optimize inventory management.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="insight-card">
+                        <div class="insight-icon">🔧</div>
+                        <div class="insight-content">
+                            <h3>Common Issues</h3>
+                            <p>Analyze objection patterns to identify recurring quality issues and improve manufacturing processes.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/dealership.js') }}"></script>
+    <script>
+        // PDI-specific functions
+        function viewPDIDetails(vinNumber) {
+            console.log('Viewing PDI details for VIN:', vinNumber);
+            window.location.href = `/dealership/vin-history?vin=${vinNumber}`;
+        }
+
+        function editPDI(pdiId) {
+            console.log('Editing PDI:', pdiId);
+            showNotification('PDI editing coming soon!', 'info');
+        }
+
+        function addNewPDI() {
+            console.log('Adding new PDI inspection');
+            showNotification('Add new PDI functionality coming soon!', 'info');
+        }
+
+        function clearFilters() {
+            document.getElementById('dealershipFilter').value = '';
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('deliveryStatusFilter').value = '';
+            document.getElementById('dateFrom').value = '';
+            document.getElementById('dateTo').value = '';
+            applyFilters();
+        }
+
+        // Initialize charts
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePDICharts();
+        });
+
+        function initializePDICharts() {
+            // Dealership PDI chart
+            const dealershipLabels = [];
+            const dealershipData = [];
+            const objectionData = [];
+            
+            {% if pdi_stats.dealership_stats %}
+                {% for stat in pdi_stats.dealership_stats %}
+                    dealershipLabels.push('{{ stat.dealership_name }}');
+                    dealershipData.push({{ stat.pdi_count }});
+                    objectionData.push({{ stat.objection_count }});
+                {% endfor %}
+            {% else %}
+                dealershipLabels.push('Haval Central', 'Haval Lahore', 'Haval Karachi', 'Haval Islamabad');
+                dealershipData.push(45, 38, 32, 28);
+                objectionData.push(8, 6, 5, 4);
+            {% endif %}
+
+            const dealershipChartData = {
+                labels: dealershipLabels,
+                datasets: [{
+                    label: 'Total PDIs',
+                    data: dealershipData,
+                    backgroundColor: 'rgba(124, 58, 237, 0.8)',
+                    borderColor: 'rgba(124, 58, 237, 1)',
+                    borderWidth: 2
+                }, {
+                    label: 'With Objections',
+                    data: objectionData,
+                    backgroundColor: 'rgba(239, 68, 68, 0.8)',
+                    borderColor: 'rgba(239, 68, 68, 1)',
+                    borderWidth: 2
+                }]
+            };
+
+            createChart('dealershipPDIChart', 'bar', dealershipChartData);
+
+            // PDI Status distribution
+            const statusData = {
+                labels: ['Passed', 'With Objections', 'Failed'],
+                datasets: [{
+                    data: [{{ pdi_stats.total_pdis - pdi_stats.objection_pdis if pdi_stats else 75 }}, {{ pdi_stats.objection_pdis if pdi_stats else 20 }}, 5],
+                    backgroundColor: [
+                        'rgba(16, 185, 129, 0.8)',
+                        'rgba(245, 158, 11, 0.8)',
+                        'rgba(239, 68, 68, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(16, 185, 129, 1)',
+                        'rgba(245, 158, 11, 1)',
+                        'rgba(239, 68, 68, 1)'
+                    ],
+                    borderWidth: 2
+                }]
+            };
+
+            createChart('pdiStatusChart', 'doughnut', statusData);
+
+            // Monthly PDI trend
+            const monthlyData = {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'PDI Reports',
+                    data: [120, 135, 128, 145, 142, 158],
+                    backgroundColor: 'rgba(124, 58, 237, 0.2)',
+                    borderColor: 'rgba(124, 58, 237, 1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            };
+
+            createChart('monthlyPDIChart', 'line', monthlyData);
+
+            // Objection rate analysis
+            const objectionRateData = {
+                labels: dealershipLabels,
+                datasets: [{
+                    label: 'Objection Rate (%)',
+                    data: dealershipLabels.map((_, index) => {
+                        const total = dealershipData[index] || 1;
+                        const objections = objectionData[index] || 0;
+                        return Math.round((objections / total) * 100);
+                    }),
+                    backgroundColor: 'rgba(245, 158, 11, 0.8)',
+                    borderColor: 'rgba(245, 158, 11, 1)',
+                    borderWidth: 2
+                }]
+            };
+
+            createChart('objectionRateChart', 'bar', objectionRateData);
+        }
+
+        // Theme toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            
+            const themeIcon = document.querySelector('.theme-icon');
+            themeIcon.textContent = newTheme === 'dark' ? '🌙' : '☀️';
+            
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // Load saved theme
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            
+            const themeIcon = document.querySelector('.theme-icon');
+            if (themeIcon) {
+                themeIcon.textContent = savedTheme === 'dark' ? '🌙' : '☀️';
+            }
+        });
+    </script>
+</body>
+</html>

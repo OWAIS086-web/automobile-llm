@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FFS Inspections - Dealership Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dealership.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- Main Container -->
+    <div class="dealership-container">
+        <!-- Header -->
+        <header class="dealership-header">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="logo-section">
+                        <img src="{{ url_for('static', filename='images/dark-logo.svg') }}" alt="Logo" class="header-logo">
+                        <div class="header-title">
+                            <h1>FFS Inspections</h1>
+                            <p>First Free Service after 1000km</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="header-right">
+                    <div class="header-actions">
+                        <button class="header-btn" onclick="toggleTheme()">
+                            <span class="theme-icon">🌙</span>
+                        </button>
+                        <button class="header-btn" onclick="window.location.href='/chatbot_advanced'">
+                            <span>💬</span>
+                            <span>Chat AI</span>
+                        </button>
+                        <div class="user-menu">
+                            <button class="user-btn">
+                                <span class="user-avatar">{{ user.username[0].upper() if user else 'U' }}</span>
+                                <span class="user-name">{{ user.username if user else 'User' }}</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="dealership-nav">
+            <div class="nav-content">
+                <div class="nav-sections">
+                    <a href="/dealership" class="nav-item">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                    <a href="/dealership/warranty-claims" class="nav-item">
+                        <span class="nav-icon">⚠️</span>
+                        <span class="nav-text">Warranty Claims</span>
+                    </a>
+                    <a href="/dealership/campaign-reports" class="nav-item">
+                        <span class="nav-icon">📋</span>
+                        <span class="nav-text">Campaign Reports</span>
+                    </a>
+                    <a href="/dealership/ffs-inspections" class="nav-item active">
+                        <span class="nav-icon">🔍</span>
+                        <span class="nav-text">FFS Inspections</span>
+                    </a>
+                    <a href="/dealership/sfs-inspections" class="nav-item">
+                        <span class="nav-icon">🔎</span>
+                        <span class="nav-text">SFS Inspections</span>
+                    </a>
+                    <a href="/dealership/pdi-inspections" class="nav-item">
+                        <span class="nav-icon">📝</span>
+                        <span class="nav-text">PDI Inspections</span>
+                    </a>
+                    <a href="/dealership/repair-orders" class="nav-item">
+                        <span class="nav-icon">🔧</span>
+                        <span class="nav-text">Repair Orders</span>
+                    </a>
+                    <a href="/dealership/vin-history" class="nav-item">
+                        <span class="nav-icon">🚗</span>
+                        <span class="nav-text">VIN History</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="dealership-main">
+            <!-- Filters Section -->
+            <section class="filters-section">
+                <div class="section-header">
+                    <h2>FFS Inspection Filters</h2>
+                    <p>Filter first free service inspections by VIN, dealership, and date</p>
+                </div>
+                
+                <div class="filters-grid">
+                    <div class="filter-group">
+                        <label for="vinFilter">VIN Number</label>
+                        <input type="text" id="vinFilter" placeholder="Enter VIN number" maxlength="17" onchange="applyFilters()">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="dealershipFilter">Dealership</label>
+                        <select id="dealershipFilter" onchange="applyFilters()">
+                            <option value="">All Dealerships</option>
+                            <option value="Haval Central">Haval Central</option>
+                            <option value="Haval Lahore">Haval Lahore</option>
+                            <option value="Haval Karachi">Haval Karachi</option>
+                            <option value="Haval Islamabad">Haval Islamabad</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="carModelFilter">Car Model</label>
+                        <select id="carModelFilter" onchange="applyFilters()">
+                            <option value="">All Models</option>
+                            <option value="Haval H6">Haval H6</option>
+                            <option value="Haval Jolion">Haval Jolion</option>
+                            <option value="Haval H6 PHEV">Haval H6 PHEV</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="dateFrom">Date From</label>
+                        <input type="date" id="dateFrom" onchange="applyFilters()">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="dateTo">Date To</label>
+                        <input type="date" id="dateTo" onchange="applyFilters()">
+                    </div>
+                    
+                    <div class="filter-actions">
+                        <button class="filter-btn clear" onclick="clearFilters()">
+                            <span>🗑️</span>
+                            <span>Clear</span>
+                        </button>
+                        <button class="filter-btn export" onclick="exportData('ffs_inspections')">
+                            <span>📤</span>
+                            <span>Export</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- FFS Statistics -->
+            <section class="stats-section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">🔍</div>
+                        <div class="stat-content">
+                            <div class="stat-number">{{ stats.total_inspections or 0 }}</div>
+                            <div class="stat-label">Total FFS Inspections</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">✅</div>
+                        <div class="stat-content">
+                            <div class="stat-number">{{ inspections|length or 0 }}</div>
+                            <div class="stat-label">Filtered Results</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">🏢</div>
+                        <div class="stat-content">
+                            <div class="stat-number">{{ stats.top_dealerships|length or 0 }}</div>
+                            <div class="stat-label">Active Dealerships</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-content">
+                            <div class="stat-number">PKR {{ "{:,.0f}".format(stats.avg_cost) if stats.avg_cost else 0 }}</div>
+                            <div class="stat-label">Average Cost</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- FFS Data Table -->
+            <section class="data-section">
+                <div class="section-header">
+                    <h2>FFS Inspection Records</h2>
+                    <p>Detailed first free service inspection data</p>
+                </div>
+                
+                <div class="data-table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>VIN Number</th>
+                                <th>Dealership</th>
+                                <th>Car Model</th>
+                                <th>Inspection Date</th>
+                                <th>Odometer (km)</th>
+                                <th>Findings</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if inspections %}
+                                {% for inspection in inspections %}
+                                <tr>
+                                    <td>
+                                        <div class="cell-content">
+                                            <strong class="vin-number">{{ inspection.vin_number or 'N/A' }}</strong>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cell-content">
+                                            <span class="dealership-badge">{{ inspection.dealership_name or 'N/A' }}</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cell-content">
+                                            {{ inspection.car_model or 'N/A' }}
+                                            {% if inspection.variant %}
+                                            <small class="variant">{{ inspection.variant }}</small>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cell-content">
+                                            {{ inspection.inspection_date or 'N/A' }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cell-content">
+                                            <span class="odometer-reading">{{ inspection.odometer_reading or 'N/A' }}</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cell-content">
+                                            <div class="findings-preview">
+                                                {{ (inspection.findings or 'No findings')[:50] }}
+                                                {% if inspection.findings and inspection.findings|length > 50 %}...{% endif %}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cell-content">
+                                            <span class="status-badge {{ inspection.status or 'completed' }}">
+                                                {{ inspection.status or 'Completed' }}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cell-actions">
+                                            <button class="action-btn view" onclick="viewFFSDetails('{{ inspection.vin_number }}')">
+                                                <span>👁️</span>
+                                            </button>
+                                            <button class="action-btn edit" onclick="editFFS('{{ inspection.id }}')">
+                                                <span>✏️</span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                            <tr>
+                                <td colspan="8" class="no-data">
+                                    <div class="no-data-content">
+                                        <span class="no-data-icon">🔍</span>
+                                        <h3>No FFS Inspection Data</h3>
+                                        <p>No first free service inspections found matching your criteria.</p>
+                                        <button class="add-btn" onclick="addNewFFS()">
+                                            <span>➕</span>
+                                            <span>Add New FFS</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- FFS Analytics -->
+            <section class="analytics-section">
+                <div class="section-header">
+                    <h2>FFS Analytics</h2>
+                    <p>Visual insights into first free service performance</p>
+                </div>
+                
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>FFS by Dealership</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="dealershipFFSChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Monthly FFS Trend</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="monthlyFFSChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Car Model Distribution</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="carModelChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/dealership.js') }}"></script>
+    <script>
+        // FFS-specific functions
+        function viewFFSDetails(vinNumber) {
+            console.log('Viewing FFS details for VIN:', vinNumber);
+            window.location.href = `/dealership/vin-history?vin=${vinNumber}`;
+        }
+
+        function editFFS(ffsId) {
+            console.log('Editing FFS:', ffsId);
+            showNotification('FFS editing coming soon!', 'info');
+        }
+
+        function addNewFFS() {
+            console.log('Adding new FFS inspection');
+            showNotification('Add new FFS functionality coming soon!', 'info');
+        }
+
+        function clearFilters() {
+            document.getElementById('vinFilter').value = '';
+            document.getElementById('dealershipFilter').value = '';
+            document.getElementById('carModelFilter').value = '';
+            document.getElementById('dateFrom').value = '';
+            document.getElementById('dateTo').value = '';
+            applyFilters();
+        }
+
+        // Initialize charts
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeFFSCharts();
+        });
+
+        function initializeFFSCharts() {
+            // Dealership FFS chart
+            const dealershipData = {
+                labels: ['Haval Central', 'Haval Lahore', 'Haval Karachi', 'Haval Islamabad'],
+                datasets: [{
+                    label: 'FFS Completed',
+                    data: [85, 67, 52, 41],
+                    backgroundColor: 'rgba(124, 58, 237, 0.8)',
+                    borderColor: 'rgba(124, 58, 237, 1)',
+                    borderWidth: 2
+                }]
+            };
+
+            createChart('dealershipFFSChart', 'bar', dealershipData);
+
+            // Monthly FFS trend
+            const monthlyData = {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'FFS Inspections',
+                    data: [45, 52, 48, 61, 55, 67],
+                    backgroundColor: 'rgba(124, 58, 237, 0.2)',
+                    borderColor: 'rgba(124, 58, 237, 1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            };
+
+            createChart('monthlyFFSChart', 'line', monthlyData);
+
+            // Car model distribution
+            const carModelData = {
+                labels: ['Haval H6', 'Haval Jolion', 'Haval H6 PHEV'],
+                datasets: [{
+                    data: [45, 35, 20],
+                    backgroundColor: [
+                        'rgba(124, 58, 237, 0.8)',
+                        'rgba(168, 85, 247, 0.8)',
+                        'rgba(192, 132, 252, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(124, 58, 237, 1)',
+                        'rgba(168, 85, 247, 1)',
+                        'rgba(192, 132, 252, 1)'
+                    ],
+                    borderWidth: 2
+                }]
+            };
+
+            createChart('carModelChart', 'doughnut', carModelData);
+        }
+
+        // Theme toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            
+            const themeIcon = document.querySelector('.theme-icon');
+            themeIcon.textContent = newTheme === 'dark' ? '🌙' : '☀️';
+            
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // Load saved theme
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            
+            const themeIcon = document.querySelector('.theme-icon');
+            if (themeIcon) {
+                themeIcon.textContent = savedTheme === 'dark' ? '🌙' : '☀️';
+            }
+        });
+    </script>
+</body>
+</html>

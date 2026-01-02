@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campaign Reports - Dealership Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dealership.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- Main Container -->
+    <div class="dealership-container">
+        <!-- Header -->
+        <header class="dealership-header">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="logo-section">
+                        <img src="{{ url_for('static', filename='images/dark-logo.svg') }}" alt="Logo" class="header-logo">
+                        <div class="header-title">
+                            <h1>Campaign Reports</h1>
+                            <p>Free Services & Campaign Management</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="header-right">
+                    <div class="header-actions">
+                        <button class="header-btn" onclick="toggleTheme()">
+                            <span class="theme-icon">🌙</span>
+                        </button>
+                        <button class="header-btn" onclick="window.location.href='/chatbot_advanced'">
+                            <span>💬</span>
+                            <span>Chat AI</span>
+                        </button>
+                        <div class="user-menu">
+                            <button class="user-btn">
+                                <span class="user-avatar">{{ user.username[0].upper() if user else 'U' }}</span>
+                                <span class="user-name">{{ user.username if user else 'User' }}</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="dealership-nav">
+            <div class="nav-content">
+                <div class="nav-sections">
+                    <a href="/dealership" class="nav-item">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                    <a href="/dealership/warranty-claims" class="nav-item">
+                        <span class="nav-icon">⚠️</span>
+                        <span class="nav-text">Warranty Claims</span>
+                    </a>
+                    <a href="/dealership/campaign-reports" class="nav-item active">
+                        <span class="nav-icon">📋</span>
+                        <span class="nav-text">Campaign Reports</span>
+                    </a>
+                    <a href="/dealership/ffs-inspections" class="nav-item">
+                        <span class="nav-icon">🔍</span>
+                        <span class="nav-text">FFS Inspections</span>
+                    </a>
+                    <a href="/dealership/sfs-inspections" class="nav-item">
+                        <span class="nav-icon">🔎</span>
+                        <span class="nav-text">SFS Inspections</span>
+                    </a>
+                    <a href="/dealership/pdi-inspections" class="nav-item">
+                        <span class="nav-icon">📝</span>
+                        <span class="nav-text">PDI Inspections</span>
+                    </a>
+                    <a href="/dealership/repair-orders" class="nav-item">
+                        <span class="nav-icon">🔧</span>
+                        <span class="nav-text">Repair Orders</span>
+                    </a>
+                    <a href="/dealership/vin-history" class="nav-item">
+                        <span class="nav-icon">🚗</span>
+                        <span class="nav-text">VIN History</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="dealership-main">
+            <!-- Filters Section -->
+            <section class="filters-section">
+                <div class="section-header">
+                    <h2>Campaign Filters</h2>
+                    <p>Filter campaigns by dealership, type, and date range</p>
+                </div>
+                
+                <div class="filters-grid">
+                    <div class="filter-group">
+                        <label for="campaignFilter">Campaign</label>
+                        <select id="campaignFilter" onchange="applyFilters()">
+                            <option value="">All Campaigns</option>
+                            <option value="free_service_2024">Free Service 2024</option>
+                            <option value="recall_campaign">Recall Campaign</option>
+                            <option value="inspection_drive">Inspection Drive</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="dealershipFilter">Dealership</label>
+                        <select id="dealershipFilter" onchange="applyFilters()">
+                            <option value="">All Dealerships</option>
+                            <option value="Haval Central">Haval Central</option>
+                            <option value="Haval Lahore">Haval Lahore</option>
+                            <option value="Haval Karachi">Haval Karachi</option>
+                            <option value="Haval Islamabad">Haval Islamabad</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="dateFrom">Date From</label>
+                        <input type="date" id="dateFrom" onchange="applyFilters()">
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="dateTo">Date To</label>
+                        <input type="date" id="dateTo" onchange="applyFilters()">
+                    </div>
+                    
+                    <div class="filter-actions">
+                        <button class="filter-btn clear" onclick="clearFilters()">
+                            <span>🗑️</span>
+                            <span>Clear</span>
+                        </button>
+                        <button class="filter-btn export" onclick="exportData('campaigns')">
+                            <span>📤</span>
+                            <span>Export</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Campaign Statistics -->
+            <section class="stats-section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon campaign">📋</div>
+                        <div class="stat-content">
+                            <div class="stat-number">{{ campaigns|length or 0 }}</div>
+                            <div class="stat-label">Total Campaigns</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">🚗</div>
+                        <div class="stat-content">
+                            <div class="stat-number">{{ campaigns|sum(attribute='vehicles_count') or 0 }}</div>
+                            <div class="stat-label">Vehicles Serviced</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">🏢</div>
+                        <div class="stat-content">
+                            <div class="stat-number">{{ campaigns|sum(attribute='dealerships_count') or 0 }}</div>
+                            <div class="stat-label">Active Dealerships</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">📈</div>
+                        <div class="stat-content">
+                            <div class="stat-number">{{ campaigns|sum(attribute='services_count') or 0 }}</div>
+                            <div class="stat-label">Total Services</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Campaign Data Table -->
+            <section class="data-section">
+                <div class="section-header">
+                    <h2>Campaign Services</h2>
+                    <p>Detailed campaign service records</p>
+                </div>
+                
+                <div class="data-table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Campaign ID</th>
+                                <th>Campaign Name</th>
+                                <th>Type</th>
+                                <th>Services Count</th>
+                                <th>Vehicles</th>
+                                <th>Dealerships</th>
+                                <th>Date Range</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if campaigns %}
+                                {% for campaign in campaigns %}
+                                <tr>
+                                    <td>
+                                        <div class="cell-content">
+                                            <span class="campaign-id">{{ campaign.campaign_id or 'N/A' }}</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cell-content">
+                                            <strong>{{ campaign.campaign_name or 'N/A' }}</strong>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cell-content">
+                                            <span class="type-badge {{ campaign.campaign_type or 'default' }}">
+                                                {{ campaign.campaign_type or 'N/A' }}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cell-content">
+                                            <span class="count-badge">{{ campaign.services_count or 0 }}</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cell-content">
+                                            <span class="count-badge">{{ campaign.vehicles_count or 0 }}</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cell-content">
+                                            <span class="count-badge">{{ campaign.dealerships_count or 0 }}</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cell-content">
+                                            <small>{{ campaign.start_date or 'N/A' }} - {{ campaign.end_date or 'N/A' }}</small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="cell-actions">
+                                            <button class="action-btn view" onclick="viewCampaignDetails('{{ campaign.campaign_id }}')">
+                                                <span>👁️</span>
+                                            </button>
+                                            <button class="action-btn edit" onclick="editCampaign('{{ campaign.campaign_id }}')">
+                                                <span>✏️</span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                            <tr>
+                                <td colspan="8" class="no-data">
+                                    <div class="no-data-content">
+                                        <span class="no-data-icon">📋</span>
+                                        <h3>No Campaign Data</h3>
+                                        <p>No campaign services found matching your criteria.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Campaign Analytics -->
+            <section class="analytics-section">
+                <div class="section-header">
+                    <h2>Campaign Analytics</h2>
+                    <p>Visual insights into campaign performance</p>
+                </div>
+                
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Services by Dealership</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="dealershipChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Campaign Types Distribution</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="campaignTypeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/dealership.js') }}"></script>
+    <script>
+        // Campaign-specific functions
+        function viewCampaignDetails(campaignId) {
+            console.log('Viewing campaign details:', campaignId);
+            // Implementation for viewing campaign details
+            showNotification('Campaign details view coming soon!', 'info');
+        }
+
+        function editCampaign(campaignId) {
+            console.log('Editing campaign:', campaignId);
+            // Implementation for editing campaign
+            showNotification('Campaign editing coming soon!', 'info');
+        }
+
+        function clearFilters() {
+            document.getElementById('campaignFilter').value = '';
+            document.getElementById('dealershipFilter').value = '';
+            document.getElementById('dateFrom').value = '';
+            document.getElementById('dateTo').value = '';
+            applyFilters();
+        }
+
+        // Initialize charts
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeCampaignCharts();
+        });
+
+        function initializeCampaignCharts() {
+            // Dealership services chart
+            const dealershipData = {
+                labels: ['Haval Central', 'Haval Lahore', 'Haval Karachi', 'Haval Islamabad'],
+                datasets: [{
+                    label: 'Services Completed',
+                    data: [45, 32, 28, 19],
+                    backgroundColor: [
+                        'rgba(124, 58, 237, 0.8)',
+                        'rgba(168, 85, 247, 0.8)',
+                        'rgba(192, 132, 252, 0.8)',
+                        'rgba(221, 214, 254, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(124, 58, 237, 1)',
+                        'rgba(168, 85, 247, 1)',
+                        'rgba(192, 132, 252, 1)',
+                        'rgba(221, 214, 254, 1)'
+                    ],
+                    borderWidth: 2
+                }]
+            };
+
+            createChart('dealershipChart', 'bar', dealershipData);
+
+            // Campaign types chart
+            const campaignTypeData = {
+                labels: ['Free Service', 'Recall', 'Inspection', 'Maintenance'],
+                datasets: [{
+                    data: [40, 25, 20, 15],
+                    backgroundColor: [
+                        'rgba(124, 58, 237, 0.8)',
+                        'rgba(168, 85, 247, 0.8)',
+                        'rgba(192, 132, 252, 0.8)',
+                        'rgba(221, 214, 254, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(124, 58, 237, 1)',
+                        'rgba(168, 85, 247, 1)',
+                        'rgba(192, 132, 252, 1)',
+                        'rgba(221, 214, 254, 1)'
+                    ],
+                    borderWidth: 2
+                }]
+            };
+
+            createChart('campaignTypeChart', 'doughnut', campaignTypeData);
+        }
+
+        // Theme toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            
+            const themeIcon = document.querySelector('.theme-icon');
+            themeIcon.textContent = newTheme === 'dark' ? '🌙' : '☀️';
+            
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // Load saved theme
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            
+            const themeIcon = document.querySelector('.theme-icon');
+            if (themeIcon) {
+                themeIcon.textContent = savedTheme === 'dark' ? '🌙' : '☀️';
+            }
+        });
+    </script>
+</body>
+</html>

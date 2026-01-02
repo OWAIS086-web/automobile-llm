@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIN History - Dealership Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dealership.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- Main Container -->
+    <div class="dealership-container">
+        <!-- Header -->
+        <header class="dealership-header">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="logo-section">
+                        <img src="{{ url_for('static', filename='images/dark-logo.svg') }}" alt="Logo" class="header-logo">
+                        <div class="header-title">
+                            <h1>VIN History</h1>
+                            <p>Complete Vehicle Service & Inspection History</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="header-right">
+                    <div class="header-actions">
+                        <button class="header-btn" onclick="toggleTheme()">
+                            <span class="theme-icon">🌙</span>
+                        </button>
+                        <button class="header-btn" onclick="window.location.href='/chatbot_advanced'">
+                            <span>💬</span>
+                            <span>Chat AI</span>
+                        </button>
+                        <div class="user-menu">
+                            <button class="user-btn">
+                                <span class="user-avatar">{{ user.username[0].upper() if user else 'U' }}</span>
+                                <span class="user-name">{{ user.username if user else 'User' }}</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="dealership-nav">
+            <div class="nav-content">
+                <div class="nav-sections">
+                    <a href="/dealership" class="nav-item">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                    <a href="/dealership/warranty-claims" class="nav-item">
+                        <span class="nav-icon">⚠️</span>
+                        <span class="nav-text">Warranty Claims</span>
+                    </a>
+                    <a href="/dealership/campaign-reports" class="nav-item">
+                        <span class="nav-icon">📋</span>
+                        <span class="nav-text">Campaign Reports</span>
+                    </a>
+                    <a href="/dealership/ffs-inspections" class="nav-item">
+                        <span class="nav-icon">🔍</span>
+                        <span class="nav-text">FFS Inspections</span>
+                    </a>
+                    <a href="/dealership/sfs-inspections" class="nav-item">
+                        <span class="nav-icon">🔎</span>
+                        <span class="nav-text">SFS Inspections</span>
+                    </a>
+                    <a href="/dealership/pdi-inspections" class="nav-item">
+                        <span class="nav-icon">📝</span>
+                        <span class="nav-text">PDI Inspections</span>
+                    </a>
+                    <a href="/dealership/repair-orders" class="nav-item">
+                        <span class="nav-icon">🔧</span>
+                        <span class="nav-text">Repair Orders</span>
+                    </a>
+                    <a href="/dealership/vin-history" class="nav-item active">
+                        <span class="nav-icon">🚗</span>
+                        <span class="nav-text">VIN History</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="dealership-main">
+            <!-- VIN Search Section -->
+            <section class="search-section">
+                <div class="section-header">
+                    <h2>VIN Number Search</h2>
+                    <p>Enter a VIN number to view complete vehicle history</p>
+                </div>
+                
+                <div class="search-form-container">
+                    <form class="vin-search-form" onsubmit="searchVinHistory(event)">
+                        <div class="search-input-group">
+                            <input type="text" id="vinSearchInput" placeholder="Enter 17-character VIN number" 
+                                   maxlength="17" value="{{ vin_number or '' }}" required>
+                            <button type="submit" class="search-btn">
+                                <span>🔍</span>
+                                <span>Search History</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            {% if history %}
+            <!-- Vehicle Information -->
+            <section class="vehicle-info-section">
+                <div class="section-header">
+                    <h2>Vehicle Information</h2>
+                    <p>Basic vehicle details and specifications</p>
+                </div>
+                
+                <div class="vehicle-info-card">
+                    <div class="vehicle-header">
+                        <div class="vehicle-icon">🚗</div>
+                        <div class="vehicle-details">
+                            <h3>{{ history.vehicle_info.car_model or 'Unknown Model' }}</h3>
+                            <p class="vin-display">VIN: {{ history.vin_number }}</p>
+                        </div>
+                        <div class="vehicle-status">
+                            <span class="status-badge {{ history.vehicle_info.status or 'active' }}">
+                                {{ history.vehicle_info.status.title() if history.vehicle_info.status else 'Active' }}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="vehicle-specs">
+                        <div class="spec-item">
+                            <label>Chassis Number:</label>
+                            <span>{{ history.vehicle_info.chassis_number or 'N/A' }}</span>
+                        </div>
+                        <div class="spec-item">
+                            <label>Engine Number:</label>
+                            <span>{{ history.vehicle_info.engine_number or 'N/A' }}</span>
+                        </div>
+                        <div class="spec-item">
+                            <label>Variant:</label>
+                            <span>{{ history.vehicle_info.variant or 'N/A' }}</span>
+                        </div>
+                        <div class="spec-item">
+                            <label>Model Year:</label>
+                            <span>{{ history.vehicle_info.model_year or 'N/A' }}</span>
+                        </div>
+                        <div class="spec-item">
+                            <label>Color:</label>
+                            <span>{{ history.vehicle_info.color or 'N/A' }}</span>
+                        </div>
+                        <div class="spec-item">
+                            <label>Manufacturing Date:</label>
+                            <span>{{ history.vehicle_info.manufacturing_date or 'N/A' }}</span>
+                        </div>
+                        <div class="spec-item">
+                            <label>Delivery Date:</label>
+                            <span>{{ history.vehicle_info.delivery_date or 'N/A' }}</span>
+                        </div>
+                        <div class="spec-item">
+                            <label>Dealership:</label>
+                            <span>{{ history.vehicle_info.dealership_name or 'N/A' }}</span>
+                        </div>
+                        <div class="spec-item">
+                            <label>Customer:</label>
+                            <span>{{ history.vehicle_info.customer_name or 'N/A' }}</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Service History Timeline -->
+            <section class="timeline-section">
+                <div class="section-header">
+                    <h2>Service History Timeline</h2>
+                    <p>Chronological view of all services, inspections, and claims</p>
+                </div>
+                
+                <div class="timeline-container">
+                    <!-- PDI Inspection -->
+                    {% if history.pdi_inspection %}
+                    <div class="timeline-item pdi">
+                        <div class="timeline-icon">📝</div>
+                        <div class="timeline-content">
+                            <div class="timeline-header">
+                                <h4>PDI Inspection</h4>
+                                <span class="timeline-date">{{ history.pdi_inspection.inspection_date }}</span>
+                            </div>
+                            <div class="timeline-details">
+                                <p><strong>Status:</strong> {{ history.pdi_inspection.pdi_status or 'N/A' }}</p>
+                                <p><strong>Dealership:</strong> {{ history.pdi_inspection.dealership_name }}</p>
+                                {% if history.pdi_inspection.objections %}
+                                <p><strong>Objections:</strong> {{ history.pdi_inspection.objection_count }} found</p>
+                                {% endif %}
+                                {% if history.pdi_inspection.notes %}
+                                <p><strong>Notes:</strong> {{ history.pdi_inspection.notes }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- FFS Inspections -->
+                    {% for ffs in history.ffs_inspections %}
+                    <div class="timeline-item ffs">
+                        <div class="timeline-icon">🔍</div>
+                        <div class="timeline-content">
+                            <div class="timeline-header">
+                                <h4>FFS Inspection</h4>
+                                <span class="timeline-date">{{ ffs.inspection_date }}</span>
+                            </div>
+                            <div class="timeline-details">
+                                <p><strong>Odometer:</strong> {{ ffs.odometer_reading }} km</p>
+                                <p><strong>Dealership:</strong> {{ ffs.dealership_name }}</p>
+                                {% if ffs.findings %}
+                                <p><strong>Findings:</strong> {{ ffs.findings }}</p>
+                                {% endif %}
+                                {% if ffs.recommendations %}
+                                <p><strong>Recommendations:</strong> {{ ffs.recommendations }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <!-- SFS Inspections -->
+                    {% for sfs in history.sfs_inspections %}
+                    <div class="timeline-item sfs">
+                        <div class="timeline-icon">🔎</div>
+                        <div class="timeline-content">
+                            <div class="timeline-header">
+                                <h4>SFS Inspection</h4>
+                                <span class="timeline-date">{{ sfs.inspection_date }}</span>
+                            </div>
+                            <div class="timeline-details">
+                                <p><strong>Odometer:</strong> {{ sfs.odometer_reading }} km</p>
+                                <p><strong>Dealership:</strong> {{ sfs.dealership_name }}</p>
+                                {% if sfs.findings %}
+                                <p><strong>Findings:</strong> {{ sfs.findings }}</p>
+                                {% endif %}
+                                {% if sfs.recommendations %}
+                                <p><strong>Recommendations:</strong> {{ sfs.recommendations }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <!-- Campaign Services -->
+                    {% for campaign in history.campaigns %}
+                    <div class="timeline-item campaign">
+                        <div class="timeline-icon">📋</div>
+                        <div class="timeline-content">
+                            <div class="timeline-header">
+                                <h4>{{ campaign.campaign_name }}</h4>
+                                <span class="timeline-date">{{ campaign.service_date }}</span>
+                            </div>
+                            <div class="timeline-details">
+                                <p><strong>Type:</strong> {{ campaign.campaign_type }}</p>
+                                <p><strong>Dealership:</strong> {{ campaign.dealership_name }}</p>
+                                <p><strong>Service Type:</strong> {{ campaign.service_type }}</p>
+                                {% if campaign.notes %}
+                                <p><strong>Notes:</strong> {{ campaign.notes }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <!-- Warranty Claims -->
+                    {% for claim in history.warranty_claims %}
+                    <div class="timeline-item warranty">
+                        <div class="timeline-icon">⚠️</div>
+                        <div class="timeline-content">
+                            <div class="timeline-header">
+                                <h4>Warranty Claim</h4>
+                                <span class="timeline-date">{{ claim.claim_date }}</span>
+                            </div>
+                            <div class="timeline-details">
+                                <p><strong>Type:</strong> {{ claim.claim_type }}</p>
+                                <p><strong>Dealership:</strong> {{ claim.dealership_name }}</p>
+                                <p><strong>Status:</strong> {{ claim.status }}</p>
+                                {% if claim.problem_description %}
+                                <p><strong>Problem:</strong> {{ claim.problem_description }}</p>
+                                {% endif %}
+                                {% if claim.cost %}
+                                <p><strong>Cost:</strong> PKR {{ "{:,.2f}".format(claim.cost) }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <!-- Repair Orders -->
+                    {% for ro in history.repair_orders %}
+                    <div class="timeline-item repair">
+                        <div class="timeline-icon">🔧</div>
+                        <div class="timeline-content">
+                            <div class="timeline-header">
+                                <h4>Repair Order - {{ ro.ro_number }}</h4>
+                                <span class="timeline-date">{{ ro.ro_date }}</span>
+                            </div>
+                            <div class="timeline-details">
+                                <p><strong>Dealership:</strong> {{ ro.dealership_name }}</p>
+                                <p><strong>Issue:</strong> {{ ro.issue_description }}</p>
+                                {% if ro.repair_description %}
+                                <p><strong>Repair:</strong> {{ ro.repair_description }}</p>
+                                {% endif %}
+                                <p><strong>Status:</strong> {{ ro.status }}</p>
+                                {% if ro.total_cost %}
+                                <p><strong>Cost:</strong> PKR {{ "{:,.2f}".format(ro.total_cost) }}</p>
+                                {% endif %}
+                                {% if ro.warranty_applicable %}
+                                <p><strong>Warranty:</strong> Applicable</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    {% if not (history.pdi_inspection or history.ffs_inspections or history.sfs_inspections or history.campaigns or history.warranty_claims or history.repair_orders) %}
+                    <div class="timeline-empty">
+                        <div class="empty-icon">📋</div>
+                        <h3>No Service History</h3>
+                        <p>No service records found for this VIN number.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </section>
+
+            <!-- Summary Statistics -->
+            <section class="summary-section">
+                <div class="section-header">
+                    <h2>Service Summary</h2>
+                    <p>Overview of all services and inspections for this vehicle</p>
+                </div>
+                
+                <div class="summary-grid">
+                    <div class="summary-card">
+                        <div class="summary-icon">📝</div>
+                        <div class="summary-content">
+                            <div class="summary-number">{{ 1 if history.pdi_inspection else 0 }}</div>
+                            <div class="summary-label">PDI Inspection</div>
+                        </div>
+                    </div>
+                    
+                    <div class="summary-card">
+                        <div class="summary-icon">🔍</div>
+                        <div class="summary-content">
+                            <div class="summary-number">{{ history.ffs_inspections|length }}</div>
+                            <div class="summary-label">FFS Inspections</div>
+                        </div>
+                    </div>
+                    
+                    <div class="summary-card">
+                        <div class="summary-icon">🔎</div>
+                        <div class="summary-content">
+                            <div class="summary-number">{{ history.sfs_inspections|length }}</div>
+                            <div class="summary-label">SFS Inspections</div>
+                        </div>
+                    </div>
+                    
+                    <div class="summary-card">
+                        <div class="summary-icon">📋</div>
+                        <div class="summary-content">
+                            <div class="summary-number">{{ history.campaigns|length }}</div>
+                            <div class="summary-label">Campaign Services</div>
+                        </div>
+                    </div>
+                    
+                    <div class="summary-card">
+                        <div class="summary-icon">⚠️</div>
+                        <div class="summary-content">
+                            <div class="summary-number">{{ history.warranty_claims|length }}</div>
+                            <div class="summary-label">Warranty Claims</div>
+                        </div>
+                    </div>
+                    
+                    <div class="summary-card">
+                        <div class="summary-icon">🔧</div>
+                        <div class="summary-content">
+                            <div class="summary-number">{{ history.repair_orders|length }}</div>
+                            <div class="summary-label">Repair Orders</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {% elif vin_number %}
+            <!-- No Data Found -->
+            <section class="no-data-section">
+                <div class="no-data-content">
+                    <div class="no-data-icon">🔍</div>
+                    <h3>No History Found</h3>
+                    <p>No service history found for VIN: <strong>{{ vin_number }}</strong></p>
+                    <p>This vehicle may not have any recorded services, inspections, or claims yet.</p>
+                </div>
+            </section>
+            {% endif %}
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/dealership.js') }}"></script>
+    <script>
+        function searchVinHistory(event) {
+            event.preventDefault();
+            const vinInput = document.getElementById('vinSearchInput');
+            const vin = vinInput.value.trim().toUpperCase();
+            
+            if (vin.length !== 17) {
+                showNotification('Please enter a valid 17-character VIN number', 'error');
+                return;
+            }
+            
+            // Validate VIN format (basic validation)
+            if (!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)) {
+                showNotification('Invalid VIN format. Please check and try again.', 'error');
+                return;
+            }
+            
+            // Redirect to search results
+            window.location.href = `/dealership/vin-history?vin=${vin}`;
+        }
+
+        // Format VIN input
+        document.getElementById('vinSearchInput').addEventListener('input', function(event) {
+            let value = event.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+            if (value.length > 17) {
+                value = value.substring(0, 17);
+            }
+            event.target.value = value;
+        });
+
+        // Theme toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            
+            const themeIcon = document.querySelector('.theme-icon');
+            themeIcon.textContent = newTheme === 'dark' ? '🌙' : '☀️';
+            
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // Load saved theme
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            
+            const themeIcon = document.querySelector('.theme-icon');
+            if (themeIcon) {
+                themeIcon.textContent = savedTheme === 'dark' ? '🌙' : '☀️';
+            }
+        });
+    </script>
+</body>
+</html>

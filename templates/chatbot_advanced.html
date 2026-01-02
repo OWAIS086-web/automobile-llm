@@ -1,0 +1,201 @@
+﻿<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insights AI - Premium Analytics Platform</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Highlight.js for syntax highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" id="hljs-light">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" id="hljs-dark" disabled>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts for premium typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Loading Screen (Hidden) -->
+    <div class="loading-screen" id="loadingScreen" style="display: none;"></div>
+
+    <!-- Main Container - 3D Layout -->
+    <div class="chatbot-container">
+        <!-- Navigation Bar - Full Width -->
+        <nav class="modern-nav">
+            <div class="nav-brand">
+                <img src="/static/images/dark-logo.svg" alt="Insights AI" class="brand-logo light-mode-logo">
+                <img src="/static/images/light-logo.svg" alt="Insights AI" class="brand-logo dark-mode-logo">
+                <span class="brand-text">Insights AI</span>
+            </div>
+            
+            <!-- Status Indicators in Navbar -->
+            <div class="nav-status">
+                <span class="status-indicator">
+                    <span class="status-dot"></span>
+                    <span>Ready</span>
+                </span>
+                <span class="status-separator">•</span>
+                <span class="status-indicator">
+                    <span>Connected</span>
+                </span>
+                <span class="status-separator">•</span>
+                <span class="status-indicator" id="navModeDescription">
+                    <span>Grok</span>
+                </span>
+            </div>
+            
+            <div class="nav-actions">
+                <!-- Data Source Dropdown in Navbar -->
+                <div class="data-source-dropdown" id="dataSourceDropdown">
+                    <button class="nav-link data-source-btn" id="dataSourceToggle" title="Select Chat Mode">
+                        <i class="fas fa-list"></i>
+                        <span>Select Mode</span>
+                    </button>
+                    
+                    <div class="data-source-menu" id="dataSourceMenu">
+                        <button class="data-source-item" data-mode="pakwheels">
+                            <i class="fas fa-car item-icon"></i>
+                            <div class="item-content">
+                                <span class="item-label">PakWheels</span>
+                                <span class="item-description">Car reviews & discussions</span>
+                            </div>
+                        </button>
+                        {% if selected_company == 'haval' %}
+                        <button class="data-source-item" data-mode="whatsapp">
+                            <i class="fab fa-whatsapp item-icon"></i>
+                            <div class="item-content">
+                                <span class="item-label">WhatsApp</span>
+                                <span class="item-description">Customer conversations</span>
+                            </div>
+                        </button>
+                        <button class="data-source-item" data-mode="facebook_beta">
+                            <i class="fab fa-facebook item-icon"></i>
+                            <div class="item-content">
+                                <span class="item-label">Facebook</span>
+                                <span class="item-description">Social media insights</span>
+                            </div>
+                        </button>
+                        <button class="data-source-item" data-mode="dealership">
+                            <i class="fas fa-store item-icon"></i>
+                            <div class="item-content">
+                                <span class="item-label">Dealership</span>
+                                <span class="item-description">Sales & operations data</span>
+                            </div>
+                        </button>
+                        {% endif %}
+                        <button class="data-source-item" data-mode="insights">
+                            <i class="fas fa-robot item-icon"></i>
+                            <div class="item-content">
+                                <span class="item-label">AI Insights</span>
+                                <span class="item-description">General AI assistant</span>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Theme Toggle -->
+                <button class="theme-toggle" title="Toggle theme">
+                    <span id="themeIcon">🌙</span>
+                </button>
+
+                <!-- Navigation Links -->
+                <a href="{{ url_for('analysis') }}" class="nav-link">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Analytics</span>
+                </a>
+                {% if selected_company == 'haval' %}
+                <a href="{{ url_for('view_whatsapp') }}" class="nav-link">
+                    <i class="fab fa-whatsapp"></i>
+                    <span>WhatsApp</span>
+                </a>
+                <a href="{{ url_for('dealership_dashboard') }}" class="nav-link">
+                    <i class="fas fa-store"></i>
+                    <span>Dealership</span>
+                </a>
+                {% endif %}
+
+                <!-- Logout -->
+                <a href="{{ url_for('logout') }}" class="nav-cta">Logout</a>
+            </div>
+        </nav>
+
+        <!-- Content Area with Sidebar -->
+        <div class="content-wrapper">
+            <!-- Sidebar - Chat History -->
+            <div class="chat-sidebar" id="chatSidebar">
+                <div class="sidebar-header">
+                    <div class="sidebar-title">
+                        <i class="fas fa-comments"></i>
+                        <span>Chat History</span>
+                    </div>
+                    <button class="new-chat-btn" id="newChatSidebarBtn">
+                        <i class="fas fa-plus"></i>
+                        <span>New</span>
+                    </button>
+                </div>
+                
+                <div class="sidebar-content">
+                    <div class="recent-chats-list" id="recentChatsSidebarList">
+                        <!-- Recent chats will be populated here -->
+                    </div>
+                </div>
+                
+                <div class="sidebar-footer">
+                    <button class="clear-history-btn" id="clearHistorySidebarBtn">
+                        <i class="fas fa-trash"></i>
+                        <span>Clear History</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="main-content">
+                <!-- Chat Area -->
+                <div class="chat-area" id="chatArea">
+                    <!-- Welcome Screen -->
+                    <div class="welcome-screen" id="welcomeScreen">
+                        <h1 class="welcome-title">Hello, {{ user.username }}!</h1>
+                        <p class="welcome-subtitle">Your AI-powered insights assistant is ready to help</p>
+                    </div>
+
+                    <!-- Messages Container -->
+                    <div class="messages-container" id="messagesContainer">
+                        <!-- Messages will be added here -->
+                    </div>
+                </div>
+
+                <!-- Input Area -->
+                <div class="input-area">
+                    <div class="input-container">
+                        <div class="input-wrapper">
+                            <textarea 
+                                id="chatInput" 
+                                class="chat-input" 
+                                placeholder="Message Insights AI..."
+                                rows="1"
+                            ></textarea>
+                            
+                            <button class="ai-mode-btn" id="aiModeToggle" title="Toggle AI Mode">
+                                <i class="fas fa-brain"></i>
+                            </button>
+                            
+                            <button class="stop-btn" id="stopBtn">
+                                <i class="fas fa-stop"></i>
+                            </button>
+                            
+                            <button class="send-btn" id="sendBtn">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                        
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+</body>
+</html>
