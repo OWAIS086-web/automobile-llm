@@ -277,7 +277,7 @@ def _restore_pipeline_state_if_exists() -> None:
 
         # Initialize LLM from centralized config
         logger.info("[HavalPipeline] Restoring RAG engine with configured LLM.")
-        api_key = getenv("GEMINI_API_KEY", "AIzaSyBAbDTiaRTCNouLSiBU-beJPCij357RgUk")
+        api_key = getenv("GEMINI_API_KEY", "key here")
         llm = get_llm_for_component("answer_generation", fallback_api_key=api_key)
 
         _rag_engine = RAGEngine(pakwheels_store=pakwheels_vs, whatsapp_store=whatsapp_vs, llm=llm, k=5)
@@ -883,3 +883,4 @@ def get_daily_weekly_stats():
     """
     with _status_lock:
         return _daily_stats, _weekly_stats
+
